@@ -1,0 +1,444 @@
+name: C++ CI
+
+on:
+  push:
+    branches: [main] # NOTE: replace/update with appropriate branch name(s)
+    tags: ['*']
+  pull_request:
+    branches: [main] # NOTE: replace/update with appropriate branch name(s)
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: Build type
+        required: false
+        default: 'Debug'
+        type: choice
+        options:
+          - Debug
+          - Release
+          - RelWithDebInfo
+          - MinSizeRel
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    permissions:
+      contents: write
+
+    defaults:
+      run:
+        # Use a bash shell, so we can use the same syntax for environment variable
+        # access regardless of the host operating system
+        # https://github.com/saxbophone/CPP20-Cross-Platform-Template
+        shell: bash
+
+    env:
+      CC: ${{ matrix.c }}
+      CXX: ${{ matrix.cxx }}
+      BUILD_TYPE: ${{ inputs.build_type || 'Debug' }}
+      CPPCHECK_VER: "2.9"
+
+      # NOTE: update executable name if it is changed in CMakeLists.txt
+      EXECUTABLE_NAME: "oop"
+      INPUT_FILENAME: "tastatura.txt"
+      BUILD_DIR: "build"
+      EXT_DIR: "ext"
+
+      # NOTE: replace with another version if this one does not work
+      # For more versions, see https://winlibs.com or
+      # https://github.com/brechtsanders/winlibs_mingw/releases/
+      MINGW_CACHE_KEY: "gcc-11.3-msvcrt-r3"
+      MINGW_VER: "11.3.0-14.0.3-10.0.0-msvcrt-r3/winlibs-x86_64-posix-seh-gcc-11.3.0-mingw-w64msvcrt-10.0.0-r3.7z"
+      # Example:
+      # MINGW_CACHE_KEY: "gcc-12.2-msvcrt-r2"
+      # MINGW_VER:  "12.2.0-14.0.6-10.0.0-msvcrt-r2/winlibs-x86_64-posix-seh-gcc-12.2.0-mingw-w64msvcrt-10.0.0-r2.7z"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            c: clang-13
+            cxx: clang++-13
+            name: Ubuntu 22.04 Clang 13
+            # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
+            # which is used by cppcheck and clang-tidy
+            cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+            # This env runs cppcheck and sanitizers
+
+          - os: ubuntu-22.04
+            c: clang-14
+            cxx: clang++-14
+            name: Ubuntu 22.04 Clang 14
+            cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+            # This env runs clang-tidy and sanitizers
+
+          - os: ubuntu-22.04
+            c: gcc-11
+            cxx: g++-11
+            name: Ubuntu 22.04 GCC 11
+            # cmake_flags:
+            # This env runs valgrind
+
+          - os: ubuntu-20.04
+            c: gcc-10
+            cxx: g++-10
+            name: Ubuntu 20.04 GCC 10
+            # cmake_flags:
+            # This env is for older glibc
+
+          - os: ubuntu-20.04
+            c: clang-12
+            cxx: clang++-12
+            name: Ubuntu 20.04 Clang 12
+            # cmake_flags:
+            # This env is for older glibc
+
+          - os: macos-12
+            c: clang
+            cxx: clang++
+            name: macOS 12 Apple Clang 13
+            # cmake_flags:
+
+          - os: macos-12
+            c: gcc-11
+            cxx: g++-11
+            name: macOS 12 GCC 11
+            # cmake_flags:
+
+          - os: windows-2022
+            c: cl
+            cxx: cl
+            name: Windows 2022 MSVC 19.32
+            # cmake_flags:
+            # cmake_generator: Ninja
+
+          - os: windows-2022
+            c: gcc
+            cxx: g++
+            name: Windows 2022 MinGW GCC 11
+            # cmake_flags:
+            cmake_generator: Ninja
+            # Ninja is faster
+            # other generator: "\"MinGW Makefiles\""
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Prepare env
+        run: |
+          echo ${GITHUB_WORKSPACE}
+          mkdir ${GITHUB_WORKSPACE}/artifacts
+
+      # Common Linux dependencies
+      # - name: Install Linux Dependencies
+      #   if: runner.os == 'Linux'
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install ...
+
+      - name: Install clang-tidy and libc++ (Linux Clang 14)
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-14'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends clang-tidy libc++-14-dev libc++abi-14-dev
+
+      - name: Install ninja libc++ (Linux Clang 13)
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-13'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends ninja-build libc++-13-dev libc++abi-13-dev
+
+      - name: Install clang-tidy and libc++ (Linux Clang 12)
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-12'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends libc++-12-dev libc++abi-12-dev
+
+      - name: Install valgrind
+        if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends valgrind
+
+      # temp workaround, there is a bug in xcode linker 14.0.1; as of now, 14.1 is in beta
+      - name: Setup Xcode version
+        if: runner.os == 'macOS' && startsWith(matrix.cxx, 'g++')
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '13.4.1'
+
+      - name: Cache tools
+        uses: actions/cache@v3
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-13'
+        id: cache-tools
+        with:
+          path: tools
+          key: tools-cppcheck-${{ env.CPPCHECK_VER }}-clang-13
+
+      - name: Build tools
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-13' && steps.cache-tools.outputs.cache-hit != 'true'
+        run: |
+          mkdir tools/
+          wget https://github.com/danmar/cppcheck/archive/${CPPCHECK_VER}.zip
+          unzip ${CPPCHECK_VER}.zip
+          rm ${CPPCHECK_VER}.zip
+          mv cppcheck-${CPPCHECK_VER} tools/cppcheck-${CPPCHECK_VER}
+          cd tools/cppcheck-${CPPCHECK_VER}
+          mkdir build
+          cmake -S . -B build
+          cmake --build build -j6
+
+      - name: Install tools
+        # this step is fast, no need for caching
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-13'
+        # build/install other tools in these steps
+        run: |
+          cd tools/cppcheck-${CPPCHECK_VER}
+          sudo cmake --install build
+
+      # Uncomment when using external dependencies so they will be cached
+      # - name: Cache deps
+      #   uses: actions/cache@v3
+      #   id: cache-deps
+      #   # make the key depend on the dependency version
+      #   with:
+      #     path: |
+      #       "${BUILD_DIR}"/_deps
+      #     key: cache-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}-${{ env.BUILD_TYPE }}
+
+      # NOTE: GH Actions does not allow updating the cache yet
+      # Using the workaround found here: https://github.com/actions/cache/issues/171
+      # Since this cache is small, it should not fill the cache too much
+      - name: Cache Ninja deps
+        uses: actions/cache@v3
+        if: matrix.cmake_generator == 'Ninja'
+        id: cache-deps-ninja
+        with:
+          path: |
+            "${BUILD_DIR}"/.ninja_deps
+            "${BUILD_DIR}"/.ninja_log
+          key: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-${{ hashFiles('CMakeLists.txt') }}
+          restore-keys: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-
+
+      - name: Cache MinGW
+        uses: actions/cache@v3
+        id: cache-mingw
+        if: runner.os == 'Windows' && matrix.cxx == 'g++'
+        with:
+          path: gcc
+          key: ${{ runner.os }}-${{ env.MINGW_CACHE_KEY }}
+
+      - name: Download toolchain (MinGW)
+        uses: suisei-cn/actions-download-file@v1
+        id: download-mingw-gcc
+        if: runner.os == 'Windows' && matrix.cxx == 'g++' && steps.cache-mingw.outputs.cache-hit != 'true'
+        with:
+          url: "https://github.com/brechtsanders/winlibs_mingw/releases/download/${{ env.MINGW_VER }}"
+          target: compiler/
+
+      - name: Install toolchain (MinGW)
+        if: runner.os == 'Windows' && matrix.cxx == 'g++' && steps.cache-mingw.outputs.cache-hit != 'true'
+        run: |
+          7z x compiler/${{ steps.download-mingw-gcc.outputs.filename }} -ogcc
+
+      - name: Configure CMake (MinGW)
+        if: runner.os == 'Windows' && matrix.cxx == 'g++'
+        run: |
+          PATH="$(pwd)/gcc/mingw64/bin:${PATH}"
+          # because GH Actions does not properly prepend to $PATH and still chooses older gcc
+          CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B "${BUILD_DIR}" \
+            -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+            -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
+            -DGITHUB_ACTIONS=${GITHUB_ACTIONS} \
+            ${{ matrix.cmake_flags }}
+
+      # - name: Cache ninja exe
+      #   uses: actions/cache@v3
+      #   id: cache-ninja-exe
+      #   if: runner.os == 'Windows' && matrix.cxx == 'cl'
+      #   with:
+      #     path: ninja
+      #     key: ${{ runner.os }}-ninja-1.11.0
+
+      # - name: Download ninja
+      #   uses: suisei-cn/actions-download-file@v1
+      #   id: download-ninja
+      #   if: matrix.cxx == 'cl' && steps.cache-ninja-exe.outputs.cache-hit != 'true'
+      #   with:
+      #     url: "https://github.com/ninja-build/ninja/releases/download/v1.11.0/ninja-win.zip"
+      #     target: ninja-exe
+
+      # - name: Extract ninja exe
+      #   if: runner.os == 'Windows' && matrix.cxx == 'cl' && steps.cache-ninja-exe.outputs.cache-hit != 'true'
+      #   run: |
+      #     7z x ninja-exe/${{ steps.download-ninja.outputs.filename }} -oninja
+
+      - name: Configure CMake
+        if: ${{ !(runner.os == 'Windows' && matrix.cxx == 'g++') }}
+        run: |
+          CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B "${BUILD_DIR}" \
+            -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+            -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
+            -DGITHUB_ACTIONS=${GITHUB_ACTIONS} \
+            ${{ matrix.cmake_flags }}
+
+      - name: Build
+        # Execute the build using N jobs (-jN)
+        run: cmake --build "${BUILD_DIR}" --config ${BUILD_TYPE} -j6
+
+      - name: Install
+        # Use CMake to "install" build artifacts (only interested in CMake registered targets) to our custom artifacts directory
+        run: cmake --install "${BUILD_DIR}" --config ${BUILD_TYPE} --prefix artifacts
+
+      - name: Move artifacts
+        run: |
+          mv artifacts/bin bin
+
+      - name: Copy missing dlls
+        if: runner.os == 'Windows' && matrix.cxx == 'cl'
+        run: |
+          if [[ "${BUILD_TYPE}" =~ "Deb" ]]; then
+            cp "$(which ucrtbased.dll)" \
+               "$(which VCRUNTIME140_1D.dll)" \
+               "$(which MSVCP140D.dll)" \
+               "$(which VCRUNTIME140D.dll)" \
+               bin/
+          fi
+          if [[ "${BUILD_TYPE}" =~ "Rel" ]]; then
+            cp "$(which ucrtbase.dll)" \
+               "$(which VCRUNTIME140_1.dll)" \
+               "$(which MSVCP140.dll)" \
+               "$(which VCRUNTIME140.dll)" \
+               bin/
+          fi
+
+      - name: Copy stdlib (MinGW)
+        if: runner.os == 'Windows' && matrix.cxx == 'g++'
+        # static linking might not work with MinGW, might be easier this way
+        run: |
+          cd gcc/mingw64/bin
+          cp libstdc++-6.dll \
+            libgcc_s_seh-1.dll \
+            libwinpthread-1.dll \
+            ${GITHUB_WORKSPACE}/bin
+
+      - name: Set current date and prefix name
+        run: |
+          echo "TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)" >> ${GITHUB_ENV}
+
+          # use the full name as prefix: {user_name}_{repo_name} (replace / with _)
+          echo "ZIP_PREFIX=$(echo ${GITHUB_REPOSITORY} | sed 's|/|_|')" >> ${GITHUB_ENV}
+
+          # or use only the repo name (github does not have a predefined environment variable for this)
+          # the regex splits by / and keeps everything after / without the / character
+          # echo "ZIP_PREFIX=$(echo ${GITHUB_REPOSITORY} | sed -E 's|.+/(.+)|\1|')" >> ${GITHUB_ENV}
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.ZIP_PREFIX }}_${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}_${{ env.TIMESTAMP }}
+          path: bin
+          retention-days: 10
+
+      - name: Cppcheck
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-13'
+        run: |
+          cppcheck --enable=all \
+                   --project="${BUILD_DIR}"/compile_commands.json \
+                   -i"${BUILD_DIR}" --suppress='*:"${BUILD_DIR}"/*' \
+                   -i"${EXT_DIR}" --suppress='*:"${EXT_DIR}"/*' \
+                   --suppress=missingIncludeSystem \
+                   --suppress=unmatchedSuppression \
+                   --suppress=useStlAlgorithm \
+                   --error-exitcode=1
+
+      - name: Clang-tidy
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-14'
+        continue-on-error: true
+        # clang-tidy is not able to follow symbolic links: https://bugs.llvm.org/show_bug.cgi?id=47460
+        # need to use | as sed separator because / is used in paths
+        run: |
+          sed -i "s|$(which clang++-14)|$(realpath $(which clang++-14))|g" "${BUILD_DIR}"/compile_commands.json
+
+          cat "${BUILD_DIR}"/compile_commands.json |
+            jq -r '.[] | .file' |           # select source file paths from CMake project; -r to strip quotes
+            grep -v "/"${BUILD_DIR}"/_deps/" |       # ignore external dependencies
+            xargs clang-tidy -p "${BUILD_DIR}"
+
+      - name: Setup memory sanitizer
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-13' && steps.cache-tools.outputs.cache-hit != 'true'
+        run: |
+          cd tools
+          git clone --depth=1 --branch=llvmorg-13.0.1 https://github.com/llvm/llvm-project
+          cd llvm-project
+          mkdir build; cd build
+          sudo ln -s -f /usr/bin/clang-13 /usr/bin/clang
+          sudo ln -s -f /usr/bin/clang++-13 /usr/bin/clang++
+          CC=clang-13 CXX=clang++-13 cmake -GNinja ../llvm \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DLLVM_ENABLE_PROJECTS="libcxx;libcxxabi" \
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++ \
+            -DLLVM_USE_SANITIZER=MemoryWithOrigins \
+            -DCMAKE_BUILD_WITH_INSTALL_RPATH=true
+          cmake --build . -j6 -- cxx cxxabi
+
+      - name: Sanitizers
+        # run one sanitizer for each env to avoid building extra binaries on one env;
+        # memory on Linux clang, address on macOS clang
+        if: startsWith(matrix.cxx, 'clang++')
+        # detect_leaks is not supported on macOS
+        # env:
+        # ASAN_OPTIONS: detect_leaks=1
+        run: |
+          cat "${INPUT_FILENAME}" | ./bin/"${EXECUTABLE_NAME}"
+
+      - name: Sanitizers (Windows MSVC)
+        # run one sanitizer for each OS to avoid building extra binaries
+        if: matrix.cxx == 'cl'
+        continue-on-error: true
+        run: |
+          if [[ "${BUILD_TYPE}" =~ "Deb" ]]; then
+            vcver=$(cat "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/Microsoft.VCToolsVersion.default.txt")
+            vcbindir="C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/${vcver}/bin/Hostx64/x64/"
+            cp "${vcbindir}/clang_rt.asan_dynamic-x86_64.dll" \
+               "${vcbindir}/clang_rt.asan_dbg_dynamic-x86_64.dll" \
+               bin/
+          fi
+          cat "${INPUT_FILENAME}" | ./bin/"${EXECUTABLE_NAME}".exe
+
+      # Application Verifier does not work with sanitizers, need separate executable
+      #- name: Application Verifier (Windows MSVC)
+      #  if: matrix.cxx == 'cl'
+      #  continue-on-error: true
+      #  run: cat "${INPUT_FILENAME}" | appverif //verify ./bin/"${EXECUTABLE_NAME}".exe
+
+      - name: Valgrind
+        if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
+        run: |
+          # remove --show-leak-kinds=all (and --track-origins=yes) if there are many leaks in external libs
+          cat "${INPUT_FILENAME}" | valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./bin/"${EXECUTABLE_NAME}"
+
+      - name: Set Tag Name
+        if: startsWith(github.ref, 'refs/tags/')
+        # trim prefix from ref to get tag name
+        run: echo "TAG_NAME=${GITHUB_REF#'refs/tags/'}" >> ${GITHUB_ENV}
+
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        # if: startsWith(github.ref, 'refs/tags/')
+        with:
+          type: 'zip'
+          path: bin
+          filename: ${{ env.ZIP_PREFIX }}_${{ env.BUILD_TYPE }}_${{ env.TAG_NAME }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            ${{ env.ZIP_PREFIX }}_${{ env.BUILD_TYPE }}_${{ env.TAG_NAME }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
