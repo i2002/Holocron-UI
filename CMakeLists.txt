@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 
 # NOTE: update executable name in .github/workflows/cmake.yml:44 when changing executable name in this file
 # for now, the project name is used as the executable name
-project(oop)
+project(HolocronUI)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -20,7 +20,7 @@ endif()
 ###############################################################################
 
 # external dependencies with FetchContent
-#include(FetchContent)
+include(FetchContent)
 #
 # NOTE: Also update env vars used for caching in .github/workflows/cmake.yml
 #FetchContent_Declare(
@@ -31,6 +31,16 @@ endif()
 #)
 #
 #FetchContent_MakeAvailable(SomeLib)
+
+FetchContent_Declare(
+        SDL2
+        GIT_REPOSITORY https://github.com/libsdl-org/SDL
+        GIT_TAG        release-2.24.1
+        GIT_SHALLOW    1
+)
+
+FetchContent_MakeAvailable(SDL2)
+set(SDL_LIBRARIES ${SDL_LIBRARIES} SDL2main SDL2-static)
 
 ###############################################################################
 
@@ -117,6 +127,10 @@ endif()
 #target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
 #target_link_directories(${PROJECT_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
 #target_link_libraries(${PROJECT_NAME} <SomeLib>)
+
+target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${SDL_SOURCE_DIR}/include)
+target_link_directories(${PROJECT_NAME} PRIVATE ${SDL_BINARY_DIR}/lib)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2main ${SDL_LIBRARIES})
 
 ###############################################################################
 

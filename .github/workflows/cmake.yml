@@ -41,7 +41,7 @@ jobs:
       CPPCHECK_VER: "2.9"
 
       # NOTE: update executable name if it is changed in CMakeLists.txt
-      EXECUTABLE_NAME: "oop"
+      EXECUTABLE_NAME: "HolocronUI"
       INPUT_FILENAME: "tastatura.txt"
       BUILD_DIR: "build"
       EXT_DIR: "ext"
