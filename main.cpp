@@ -1,38 +1,38 @@
-#include <SDL.h>
-#include <iostream>
+#include <centurion/centurion.hpp>
 
-int main(int argv, char** args){
-    for(int i = 0; i < argv; i++) {
-        std::cout << args[i] << '\n';
+int main()
+{
+    const cen::sdl sdl;
+    const cen::img img;
+
+    /* Create a window and an associated renderer */
+    cen::window window{"Demo", cen::iarea{}};
+    cen::renderer renderer = window.make_renderer();
+    
+    /* Make sure our window is visible */
+    window.show();
+    
+    cen::event_handler event;
+    bool running = true;
+    
+    while (running) {
+        while (event.poll()) {
+            /* Check if the user wants to quit the application */
+            if (event.is<cen::quit_event>()) {
+                running = false;
+                break;
+            }
+        }
+    
+        renderer.clear_with(cen::colors::coral);
+        renderer.draw_line(cen::ipoint{5, 5}, cen::ipoint{100, 100});
+        /* Miscellaneous rendering code goes here... */
+    
+        renderer.present();
     }
-    if (SDL_Init(SDL_INIT_VIDEO) != 0){
-        std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
-        return 1;
-    }
+    
+    /* Make the window invisible again, this might not be necessary, but it doesn't hurt */
+    window.hide();
 
-    // Create an application window with the following settings:
-    SDL_Window *window = SDL_CreateWindow(
-            "An SDL2 window",                  // window title
-            SDL_WINDOWPOS_UNDEFINED,           // initial x position
-            SDL_WINDOWPOS_UNDEFINED,           // initial y position
-            640,                               // width, in pixels
-            480,                               // height, in pixels
-            SDL_WINDOW_OPENGL                  // flags - see below
-    );
-
-    // Check that the window was successfully created
-    if (window == NULL) {
-        // In the case that the window could not be made...
-        std::cout << "Could not create window: %s\n" << SDL_GetError();
-        return 1;
-    }
-
-    // The window is open: could enter program loop here (see SDL_PollEvent())
-    SDL_Delay(3000);  // Pause execution for 3000 milliseconds, for example
-
-    // Close and destroy the window
-    SDL_DestroyWindow(window);
-
-    SDL_Quit();
     return 0;
 }

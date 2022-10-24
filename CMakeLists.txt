@@ -8,6 +8,17 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+
+option(SDL2IMAGE_INSTALL "" OFF) 
+option(SDL2TTF_INSTALL "" OFF) 
+option(SDL2NET_INSTALL "" OFF)
+option(SDL2IMAGE_SAMPLES "" OFF) 
+option(SDL2NET_SAMPLES "" OFF) 
+option(SDL2TTF_SAMPLES "" OFF) 
+option(SDL2MIXER_SAMPLES "" OFF)
+option(SDL2TTF_VENDORED "" ON)
+
+
 # By default, treat warnings as errors; override via cmake defines or via env vars
 if(DEFINED WARNINGS_AS_ERRORS)
   # do nothing, already defined
@@ -20,7 +31,6 @@ endif()
 ###############################################################################
 
 # external dependencies with FetchContent
-include(FetchContent)
 #
 # NOTE: Also update env vars used for caching in .github/workflows/cmake.yml
 #FetchContent_Declare(
@@ -31,16 +41,55 @@ include(FetchContent)
 #)
 #
 #FetchContent_MakeAvailable(SomeLib)
-
+  
+include(FetchContent)
+set(SDL_SHARED ON)
+set(SDL_STATIC OFF)
 FetchContent_Declare(
         SDL2
         GIT_REPOSITORY https://github.com/libsdl-org/SDL
         GIT_TAG        release-2.24.1
         GIT_SHALLOW    1
 )
-
 FetchContent_MakeAvailable(SDL2)
-set(SDL_LIBRARIES ${SDL_LIBRARIES} SDL2main SDL2-static)
+
+FetchContent_Declare(
+        SDL2_image
+        GIT_REPOSITORY https://github.com/libsdl-org/SDL_image
+        GIT_TAG        release-2.6.2
+)
+
+set(SDL2MIXER_OPUS OFF)
+FetchContent_Declare(
+        SDL2_mixer
+        GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer
+        GIT_TAG        release-2.6.2
+)
+
+FetchContent_Declare(
+        SDL2_ttf
+        GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf
+        GIT_TAG        release-2.20.1
+)
+
+
+FetchContent_MakeAvailable(SDL2_image SDL2_ttf SDL2_mixer)
+set(SDL_LIBRARIES ${SDL_LIBRARIES} SDL2main SDL2-shared SDL2_image)
+set(SDL2_MIXER_LIBRARY ${SDL2_mixer_BINARY_DIR}/bin)
+set(SDL2_MIXER_INCLUDE_DIR ${SDL2_mixer_SOURCE_DIR}/include)
+
+set(SDL2_TTF_LIBRARY ${SDL2_ttf_BINARY_DIR}/bin)
+set(SDL2_TTF_INCLUDE_DIR ${SDL2_ttf_SOURCE_DIR}/include)
+
+# set(SDL2_MIXER_FOUND, TRUE)
+message("AA: ${SDL2_MIXER_INCLUDE_DIR}")
+set(SDL2_MIXER_PATH, ${SDL2_mixer_SOURCE_DIR})
+FetchContent_Declare(
+        Centurion
+        GIT_REPOSITORY https://github.com/albin-johansson/centurion
+        GIT_TAG        v.7.2.0
+)
+FetchContent_MakeAvailable(Centurion)
 
 ###############################################################################
 
@@ -128,9 +177,11 @@ endif()
 #target_link_directories(${PROJECT_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
 #target_link_libraries(${PROJECT_NAME} <SomeLib>)
 
-target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${SDL_SOURCE_DIR}/include)
-target_link_directories(${PROJECT_NAME} PRIVATE ${SDL_BINARY_DIR}/lib)
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2main ${SDL_LIBRARIES})
+# target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${SDL_SOURCE_DIR}/include)
+target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${Centurion_SOURCE_DIR}/include)
+# target_link_directories(${PROJECT_NAME} PRIVATE ${SDL_BINARY_DIR}/lib)
+target_link_directories(${PROJECT_NAME} PRIVATE ${Centurion_BINARY_DIR}/lib)
+# target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2main ${SDL_LIBRARIES})
 
 ###############################################################################
 
