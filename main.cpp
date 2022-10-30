@@ -1,4 +1,4 @@
-#include <centurion/centurion.hpp>
+#include <centurion.hpp>
 
 int main()
 {
@@ -6,7 +6,7 @@ int main()
     const cen::img img;
 
     /* Create a window and an associated renderer */
-    cen::window window{"Demo", cen::iarea{}};
+    cen::window window{"Demo", cen::iarea{1000, 500}};
     cen::renderer renderer = window.make_renderer();
     
     /* Make sure our window is visible */
