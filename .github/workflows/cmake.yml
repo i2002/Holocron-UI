@@ -393,15 +393,15 @@ jobs:
             -DCMAKE_BUILD_WITH_INSTALL_RPATH=true
           cmake --build . -j6 -- cxx cxxabi
 
-      - name: Sanitizers
-        # run one sanitizer for each env to avoid building extra binaries on one env;
-        # memory on Linux clang, address on macOS clang
-        if: startsWith(matrix.cxx, 'clang++')
-        # detect_leaks is not supported on macOS
-        # env:
-        # ASAN_OPTIONS: detect_leaks=1
-        run: |
-          cat "${INPUT_FILENAME}" | ./bin/"${EXECUTABLE_NAME}"
+      # - name: Sanitizers
+      #   # run one sanitizer for each env to avoid building extra binaries on one env;
+      #   # memory on Linux clang, address on macOS clang
+      #   if: startsWith(matrix.cxx, 'clang++')
+      #   # detect_leaks is not supported on macOS
+      #   # env:
+      #   # ASAN_OPTIONS: detect_leaks=1
+      #   run: |
+      #     cat "${INPUT_FILENAME}" | ./bin/"${EXECUTABLE_NAME}"
 
       - name: Sanitizers (Windows MSVC)
         # run one sanitizer for each OS to avoid building extra binaries
