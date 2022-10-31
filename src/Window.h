@@ -20,7 +20,7 @@ class Window
 
 public:
     Window(const Window &w);
-    Window(std::string title = "Untitled window", const cen::color &color = cen::colors::white);
+    explicit Window(std::string title = "Untitled window", const cen::color &color = cen::colors::white);
     ~Window();
     
     friend std::ostream& operator<<(std::ostream& os, const Window &w);
