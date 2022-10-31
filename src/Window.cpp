@@ -2,7 +2,7 @@
 
 Window::Window(const Window &w) :
     widgets{w.widgets},
-    win{w.title, cen::iarea(1000, 500)},
+    win{w.title, cen::iarea{1000, 500}},
     renderer{win.make_renderer()}
 {
     title = w.title;
@@ -10,7 +10,7 @@ Window::Window(const Window &w) :
 }
 
 Window::Window(std::string title, const cen::color &color) :
-    win{title, cen::iarea(1000, 500)},
+    win{title, cen::iarea{1000, 500}},
     renderer{win.make_renderer()}
 {
     this->title = title;
