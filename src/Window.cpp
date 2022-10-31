@@ -1,19 +1,26 @@
-#include "../include/Window.h"
+#include "Window.h"
 
-Window::Window(const Window &w) : widgets{w.widgets}
+Window::Window(const Window &w) :
+    widgets{w.widgets},
+    win{w.title, cen::iarea(1000, 500)},
+    renderer{win.make_renderer()}
 {
     title = w.title;
     color = w.color;
 }
 
-Window::Window(std::string title, const cen::color &color)
+Window::Window(std::string title, const cen::color &color) :
+    win{title, cen::iarea(1000, 500)},
+    renderer{win.make_renderer()}
 {
     this->title = title;
     this->color = color;
+    win.show();
 }
 
 Window::~Window()
 {
+    win.hide();
     for(auto it : widgets) {
         std::get<2>(it).destroy();
     }
@@ -37,7 +44,7 @@ Window& Window::operator=(const Window &other)
     return *this;
 }
 
-void Window::render(cen::renderer &renderer)
+void Window::render()
 {
     // window background color
     renderer.clear_with(color);
@@ -49,4 +56,9 @@ void Window::render(cen::renderer &renderer)
 
     // present rendered items
     renderer.present();
+}
+
+void Window::add_widget(Widget w, int x, int y)
+{
+    widgets.push_back({x, y, w});
 }

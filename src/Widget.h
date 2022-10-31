@@ -5,9 +5,13 @@
 
 class Widget
 {
+public:
     enum Position {VERTICAL, HORIZONTAL, SLOPE};
+
+private:
     int size;
     Widget::Position pos;
+
 public:
     Widget(int size = 10, Widget::Position pos = Widget::HORIZONTAL);
     friend std::ostream& operator<<(std::ostream& os, const Widget &w);

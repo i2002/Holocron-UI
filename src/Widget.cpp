@@ -1,4 +1,4 @@
-#include "../include/Widget.h"
+#include "Widget.h"
 
 Widget::Widget(int size, Widget::Position pos)
 {
