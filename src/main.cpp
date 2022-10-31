@@ -1,4 +1,5 @@
 #include "Application.h"
+#include <iostream>
 
 int main()
 {
@@ -7,6 +8,7 @@ int main()
     const cen::img img;
 
     Application a;
+    std::cout << a;
     a.run();
     return 0;
 }

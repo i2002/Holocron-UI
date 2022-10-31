@@ -13,7 +13,7 @@ class Application
     void process_event(cen::event_handler &e);
 public:
     Application();
-    friend std::ostream& operator<<(std::ostream& os, const Application &w);
+    friend std::ostream& operator<<(std::ostream& os, const Application &a);
     void run();
 };
 

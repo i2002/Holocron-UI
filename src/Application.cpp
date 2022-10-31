@@ -30,3 +30,9 @@ void Application::process_event(cen::event_handler &e)
         running = false;
     }
 }
+
+std::ostream& operator<<(std::ostream& os, const Application &a)
+{
+    os << "Application, with window: " << a.main_window;
+    return os;
+}

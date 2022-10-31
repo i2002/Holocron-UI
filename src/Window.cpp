@@ -28,7 +28,11 @@ Window::~Window()
 
 std::ostream& operator<<(std::ostream &os, const Window &w)
 {
-    os << "Window with title: \"" << w.title <<"\"\n";
+    os << "Window with title: \"" << w.title <<"\" and widgets: {\n";
+    for(auto it: w.widgets) {
+        os << "- at x: " << std::get<0>(it) << " and y: " << std::get<1>(it) << " " << std::get<2>(it);
+    }
+    os << "}\n";
     return os;
 }
 
