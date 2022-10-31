@@ -1,26 +1,32 @@
-# OOP Template
+# Holocron UI
+Simple UI toolkit powered by SDL.
 
+## Usage
+
+## Class list
+
+## Tasklist
 ### Tema 0
 
-- [ ] Nume proiect (îl puteți schimba ulterior)
-- [ ] Scurtă descriere a temei alese, ce v-ați propus să implementați
+- [*] Nume proiect (îl puteți schimba ulterior)
+- [*] Scurtă descriere a temei alese, ce v-ați propus să implementați
 
 ## Tema 1
 
 #### Cerințe
-- [ ] definirea a minim 3-4 clase folosind compunere
-- [ ] constructori de inițializare
-- [ ] pentru o clasă: constructor de copiere, `operator=` de copiere, destructor
+- [*] definirea a minim 3-4 clase folosind compunere
+- [*] constructori de inițializare
+- [*] pentru o clasă: constructor de copiere, `operator=` de copiere, destructor
 <!-- - [ ] pentru o altă clasă: constructor de mutare, `operator=` de mutare, destructor -->
 <!-- - [ ] pentru o altă clasă: toate cele 5 funcții membru speciale -->
 - [ ] `operator<<` pentru toate clasele
-- [ ] cât mai multe `const`
-- [ ] implementarea a minim 3 funcții membru publice pentru funcționalități specifice temei alese
-- [ ] scenariu de utilizare a claselor definite: crearea de obiecte și apelarea funcțiilor membru publice în main
+- [*] cât mai multe `const`
+- [*] implementarea a minim 3 funcții membru publice pentru funcționalități specifice temei alese
+- [*] scenariu de utilizare a claselor definite: crearea de obiecte și apelarea funcțiilor membru publice în main _(?)_
 - [ ] tag de `git`: de exemplu `v0.1`
-- [ ] serviciu de integrare continuă (CI); exemplu: GitHub Actions
+- [ ] serviciu de integrare continuă (CI); exemplu: GitHub Actions _(!)_
 
-## Tema 2
+### Tema 2
 
 #### Cerințe
 - [ ] separarea codului din clase în `.h` (sau `.hpp`) și `.cpp`
@@ -39,7 +45,7 @@
 - [ ] la sfârșit: commit separat cu adăugarea unei noi derivate
 - [ ] tag de `git`: de exemplu `v0.2`
 
-## Tema 3
+### Tema 3
 
 #### Cerințe
 - [ ] 2 șabloane de proiectare (design patterns)
@@ -49,5 +55,5 @@
 - [ ] tag de `git`: de exemplu `v0.3` sau `v1.0`
 
 ## Resurse
-
+- https://github.com/albin-johansson/centurion (MIT)
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
