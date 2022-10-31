@@ -1,19 +1,19 @@
 #include "Window.h"
 
 Window::Window(const Window &w) :
+    title{w.title},
+    color{w.color},
     widgets{w.widgets},
     win{w.title, cen::iarea{1000, 500}},
     renderer{win.make_renderer()}
 {
-    title = w.title;
-    color = w.color;
 }
 
-Window::Window(std::string title, const cen::color &color) :
-    win{title, cen::iarea{1000, 500}},
+Window::Window(const std::string &t, const cen::color &color) :
+    win{t, cen::iarea{1000, 500}},
     renderer{win.make_renderer()}
 {
-    this->title = title;
+    this->title = t;
     this->color = color;
     win.show();
 }
