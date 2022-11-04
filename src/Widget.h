@@ -6,7 +6,7 @@
 class Widget
 {
 public:
-    enum Position {VERTICAL, HORIZONTAL, SLOPE};
+    enum Position {VERTICAL, HORIZONTAL, DIAGONAL};
 
 private:
     int size;
