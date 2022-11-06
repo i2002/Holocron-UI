@@ -140,6 +140,12 @@ jobs:
       #     sudo apt-get update
       #     sudo apt-get install ...
 
+      - name: Test macOS
+        if: runner.os == 'macOS'
+        run: |
+           brew install sdl2
+           ls /usr/local/Cellar/sdl2
+
       - name: SDL Dependencies
         if: runner.os == 'Linux'
         run: |
