@@ -58,7 +58,6 @@ if (WIN32)
     list(APPEND CMAKE_PREFIX_PATH "${sdl2_ttf_SOURCE_DIR}/")
 endif ()
 
-message("${CMAKE_PREFIX_PATH}")
 # ---- Centurion ----
 FetchContent_Declare(Centurion
     GIT_REPOSITORY https://github.com/albin-johansson/centurion
@@ -185,3 +184,10 @@ endif ()
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 # install(DIRECTORY some_dir1 some_dir2 DESTINATION bin)
 # install(FILES some_file1.txt some_file2.md DESTINATION bin)
+
+if (WIN32)
+    install(FILES ${PROJECT_BINARY_DIR}/SDL2.dll DESTINATION bin)
+    install(FILES ${PROJECT_BINARY_DIR}/SDL2_image.dll DESTINATION bin)
+    install(FILES ${PROJECT_BINARY_DIR}/SDL2_mixer.dll DESTINATION bin)
+    install(FILES ${PROJECT_BINARY_DIR}/SDL2_ttf.dll DESTINATION bin)
+endif()
