@@ -143,9 +143,8 @@ jobs:
       - name: Test macOS
         if: runner.os == 'macOS'
         run: |
-           curl "https://github.com/libsdl-org/SDL/releases/download/release-2.24.0/SDL2-2.24.0.dmg" > ~/SDL2.dmg -s
-           sudo hdiutil attach ~/SDL2.dmg
-           ls /Volumes/SDL2/
+           brew install sdl2
+           ls /usr/local/Cellar/sdl2
 
       - name: SDL Dependencies
         if: runner.os == 'Linux'
