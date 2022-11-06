@@ -11,11 +11,11 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 # By default, treat warnings as errors; override via cmake defines or via env vars
 if(DEFINED WARNINGS_AS_ERRORS)
-  # do nothing, already defined
+    # do nothing, already defined
 elseif(DEFINED ENV{WARNINGS_AS_ERRORS})
-  set(WARNINGS_AS_ERRORS $ENV{WARNINGS_AS_ERRORS})
+    set(WARNINGS_AS_ERRORS $ENV{WARNINGS_AS_ERRORS})
 else()
-  set(WARNINGS_AS_ERRORS ON)
+    set(WARNINGS_AS_ERRORS ON)
 endif()
 
 ###############################################################################
@@ -31,20 +31,54 @@ endif()
 #)
 #
 #FetchContent_MakeAvailable(SomeLib)
-  
+
+# ---- SDL2 ----
 include(FetchContent)
-FetchContent_Declare(
-        Centurion
-        GIT_REPOSITORY https://github.com/albin-johansson/centurion
-        GIT_TAG        v.7.2.0
+if (WIN32)
+    FetchContent_Declare(SDL2
+        URL     https://github.com/libsdl-org/SDL/releases/download/release-2.24.2/SDL2-devel-2.24.2-vc.zip
+    )
+
+    FetchContent_Declare(SDL2_image
+        URL     https://github.com/libsdl-org/SDL_image/releases/download/release-2.6.2/SDL2_image-devel-2.6.2-vc.zip
+    )
+
+    FetchContent_Declare(SDL2_mixer
+        URL     https://github.com/libsdl-org/SDL_mixer/releases/download/release-2.6.2/SDL2_mixer-devel-2.6.2-vc.zip
+    )
+
+    FetchContent_Declare(SDL2_ttf
+        URL     https://github.com/libsdl-org/SDL_ttf/releases/download/release-2.20.1/SDL2_ttf-devel-2.20.1-vc.zip
+    )
+
+    FetchContent_MakeAvailable(SDL2 SDL2_image SDL2_mixer SDL2_ttf)
+    list(APPEND CMAKE_PREFIX_PATH "${sdl2_SOURCE_DIR}/")
+    list(APPEND CMAKE_PREFIX_PATH "${sdl2_image_SOURCE_DIR}/")
+    list(APPEND CMAKE_PREFIX_PATH "${sdl2_mixer_SOURCE_DIR}/")
+    list(APPEND CMAKE_PREFIX_PATH "${sdl2_ttf_SOURCE_DIR}/")
+endif ()
+
+message("${CMAKE_PREFIX_PATH}")
+# ---- Centurion ----
+FetchContent_Declare(Centurion
+    GIT_REPOSITORY https://github.com/albin-johansson/centurion
+    GIT_TAG        v.7.2.0
 )
-FetchContent_MakeAvailable(Centurion)
+
+FetchContent_GetProperties(Centurion)
+if(NOT centurion_POPULATED)
+    FetchContent_Populate(Centurion)
+endif()
 
 ###############################################################################
 
 # external dependencies with find_package
 
 # find_package(Threads REQUIRED)
+find_package(SDL2 REQUIRED CONFIG)
+find_package(SDL2_image REQUIRED CONFIG)
+find_package(SDL2_mixer REQUIRED CONFIG)
+find_package(SDL2_ttf REQUIRED CONFIG)
 
 ###############################################################################
 
@@ -56,8 +90,8 @@ add_executable(${PROJECT_NAME} src/main.cpp src/Application.cpp src/Window.cpp s
 # target definitions
 
 if(GITHUB_ACTIONS)
-  message("NOTE: GITHUB_ACTIONS defined")
-  target_compile_definitions(${PROJECT_NAME} PRIVATE GITHUB_ACTIONS)
+    message("NOTE: GITHUB_ACTIONS defined")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE GITHUB_ACTIONS)
 endif()
 
 ###############################################################################
@@ -67,12 +101,12 @@ message("Compiler: ${CMAKE_CXX_COMPILER_ID} version ${CMAKE_CXX_COMPILER_VERSION
 if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /W4 /permissive- /wd4244 /wd4267 /external:anglebrackets /external:W0)
     if(WARNINGS_AS_ERRORS)
-      target_compile_options(${PROJECT_NAME} PRIVATE /WX)
+        target_compile_options(${PROJECT_NAME} PRIVATE /WX)
     endif()
 else()
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic)
     if(WARNINGS_AS_ERRORS)
-      target_compile_options(${PROJECT_NAME} PRIVATE -Werror)
+        target_compile_options(${PROJECT_NAME} PRIVATE -Werror)
     endif()
 
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
@@ -125,22 +159,25 @@ endif()
 #target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
 #target_link_directories(${PROJECT_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
 #target_link_libraries(${PROJECT_NAME} <SomeLib>)
-# target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${SDL_SOURCE_DIR}/include)
-target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${centurion_SOURCE_DIR}/src)
-target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
-${SDL2_INCLUDE_DIR}
-${SDL2_IMAGE_INCLUDE_DIR}
-${SDL2_TTF_INCLUDE_DIR}
-${SDL2_MIXER_INCLUDE_DIR})
-# target_link_directories(${PROJECT_NAME} PRIVATE ${SDL_BINARY_DIR}/lib)
-target_link_directories(${PROJECT_NAME} PRIVATE ${centurion_BINARY_DIR}/lib)
-target_link_libraries(${PROJECT_NAME}
-                        PRIVATE
-                        ${SDL2_LIBRARY}
-                        ${SDL2_IMAGE_LIBRARY}
-                        ${SDL2_TTF_LIBRARIES}
-                        ${SDL2_MIXER_LIBRARIES})
-# target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2main ${SDL_LIBRARIES})
+
+target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE "${centurion_SOURCE_DIR}/src/")
+target_link_libraries(${PROJECT_NAME} PRIVATE ${SDL2_LIBRARIES} SDL2_image::SDL2_image SDL2_mixer::SDL2_mixer SDL2_ttf::SDL2_ttf)
+
+###############################################################################
+
+# post build steps
+
+# on windows: copy SDL dlls into binary dir
+if (WIN32)
+    get_target_property(SDL_BIN SDL2::SDL2 IMPORTED_LOCATION)
+    get_target_property(SDL_image_BIN SDL2_image::SDL2_image IMPORTED_LOCATION)
+    get_target_property(SDL_mixer_BIN SDL2_mixer::SDL2_mixer IMPORTED_LOCATION)
+    get_target_property(SDL_ttf_BIN SDL2_ttf::SDL2_ttf IMPORTED_LOCATION)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SDL2_BINDIR}/SDL2.dll $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SDL_image_BIN} $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SDL_mixer_BIN} $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SDL_ttf_BIN} $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+endif ()
 
 ###############################################################################
 

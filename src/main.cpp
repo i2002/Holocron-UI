@@ -1,7 +1,7 @@
 #include "Application.h"
 #include <iostream>
 
-int main()
+int main(int, char**)
 {
     // initialize SDL library
     const cen::sdl sdl;
