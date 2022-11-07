@@ -134,11 +134,26 @@ jobs:
           mkdir ${GITHUB_WORKSPACE}/artifacts
 
       # Common Linux dependencies
-      # - name: Install Linux Dependencies
-      #   if: runner.os == 'Linux'
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install ...
+      - name: Install Linux Dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends \
+            libxrandr-dev \
+            libxcursor-dev \
+            libudev-dev \
+            libopenal-dev \
+            libflac-dev \
+            libvorbis-dev \
+            libgl1-mesa-dev \
+            libegl1-mesa-dev \
+            libdrm-dev \
+            libgbm-dev \
+            xorg \
+            xdotool \
+            openbox \
+            libxkbcommon-x11-0 \
+            libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xfixes0
 
       - name: SDL Dependencies (Linux)
         if: runner.os == 'Linux'
@@ -225,14 +240,14 @@ jobs:
           sudo cmake --install build
 
       # Uncomment when using external dependencies so they will be cached
-      # - name: Cache deps
-      #   uses: actions/cache@v3
-      #   id: cache-deps
-      #   # make the key depend on the dependency version
-      #   with:
-      #     path: |
-      #       "${BUILD_DIR}"/_deps
-      #     key: cache-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}-${{ env.BUILD_TYPE }}
+      - name: Cache deps
+        uses: actions/cache@v3
+        id: cache-deps
+        # make the key depend on the dependency version
+        with:
+          path: |
+            "${BUILD_DIR}"/_deps
+          key: cache-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}-${{ env.BUILD_TYPE }}
 
       # NOTE: GH Actions does not allow updating the cache yet
       # Using the workaround found here: https://github.com/actions/cache/issues/171
@@ -411,17 +426,26 @@ jobs:
             -DCMAKE_BUILD_WITH_INSTALL_RPATH=true
           cmake --build . -j6 -- cxx cxxabi
 
-      # - name: Sanitizers
-      #   # run one sanitizer for each env to avoid building extra binaries on one env;
-      #   # memory on Linux clang, address on macOS clang
-      #   if: startsWith(matrix.cxx, 'clang++')
-      #   # detect_leaks is not supported on macOS
-      #   # env:
-      #   # ASAN_OPTIONS: detect_leaks=1
-      #   run: |
-      #     cat "${INPUT_FILENAME}" | ./bin/"${EXECUTABLE_NAME}"
+      - name: Make scripts executable
+        if: runner.os == 'Linux'
+        run: |
+          chmod +x scripts/*
+          # chmod +x scripts/run_sanitizers.sh scripts/run_valgrind.sh
 
-      - name: Sanitizers (Windows MSVC)
+      - name: Sanitizers
+        uses: GabrielBB/xvfb-action@v1
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-14'
+        continue-on-error: true
+        env:
+          ASAN_OPTIONS: halt_on_error=0
+          DISPLAY: :99.0
+          EXECUTABLE_NAME: ${{ env.EXECUTABLE_NAME }}
+        with:
+          run: |
+            ./scripts/run_sanitizers.sh || true
+          working-directory: ${{github.workspace}}
+
+      - name: Copy sanitizers DLLs (Windows MSVC)
         # run one sanitizer for each OS to avoid building extra binaries
         if: matrix.cxx == 'cl'
         continue-on-error: true
@@ -433,7 +457,6 @@ jobs:
                "${vcbindir}/clang_rt.asan_dbg_dynamic-x86_64.dll" \
                bin/
           fi
-          cat "${INPUT_FILENAME}" | ./bin/"${EXECUTABLE_NAME}".exe
 
       # Application Verifier does not work with sanitizers, need separate executable
       #- name: Application Verifier (Windows MSVC)
@@ -441,11 +464,17 @@ jobs:
       #  continue-on-error: true
       #  run: cat "${INPUT_FILENAME}" | appverif //verify ./bin/"${EXECUTABLE_NAME}".exe
 
-      # - name: Valgrind
-      #   if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
-      #   run: |
-      #     # remove --show-leak-kinds=all (and --track-origins=yes) if there are many leaks in external libs
-      #     cat "${INPUT_FILENAME}" | valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./bin/"${EXECUTABLE_NAME}"
+      - name: Valgrind
+        if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
+        continue-on-error: true
+        uses: GabrielBB/xvfb-action@v1
+        env:
+          DISPLAY: :99.0
+          EXECUTABLE_NAME: ${{ env.EXECUTABLE_NAME }}
+        with:
+          run: |
+            ./scripts/run_valgrind.sh || true
+          working-directory: ${{github.workspace}}
 
       - name: Set Tag Name
         if: startsWith(github.ref, 'refs/tags/')
