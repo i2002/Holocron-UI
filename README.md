@@ -22,9 +22,9 @@ Simple UI toolkit powered by SDL.
 - [x] `operator<<` pentru toate clasele
 - [x] cât mai multe `const`
 - [x] implementarea a minim 3 funcții membru publice pentru funcționalități specifice temei alese
-- [x] scenariu de utilizare a claselor definite: crearea de obiecte și apelarea funcțiilor membru publice în main _(?)_
-- [ ] tag de `git`: de exemplu `v0.1`
-- [ ] serviciu de integrare continuă (CI); exemplu: GitHub Actions _(!)_
+- [x] scenariu de utilizare a claselor definite: crearea de obiecte și apelarea funcțiilor membru publice în main
+- [x] tag de `git`: de exemplu `v0.1`
+- [x] serviciu de integrare continuă (CI); exemplu: GitHub Actions
 
 ### Tema 2
 
