@@ -163,12 +163,12 @@ jobs:
           sudo mkdir -p /usr/lib/x86_64-linux-gnu/cmake/SDL2_image/
           sudo mkdir -p /usr/lib/x86_64-linux-gnu/cmake/SDL2_mixer/
           sudo mkdir -p /usr/lib/x86_64-linux-gnu/cmake/SDL2_ttf/
-          sudo cp ${GITHUB_WORKSPACE}/.github/workflows/helpers/sdl2_image-config-version.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2_image/sdl2_image-config-version.cmake
-          sudo cp ${GITHUB_WORKSPACE}/.github/workflows/helpers/sdl2_image-config.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2_image/sdl2_image-config.cmake
-          sudo cp ${GITHUB_WORKSPACE}/.github/workflows/helpers/sdl2_mixer-config-version.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2_mixer/sdl2_mixer-config-version.cmake
-          sudo cp ${GITHUB_WORKSPACE}/.github/workflows/helpers/sdl2_mixer-config.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2_mixer/sdl2_mixer-config.cmake
-          sudo cp ${GITHUB_WORKSPACE}/.github/workflows/helpers/sdl2_ttf-config-version.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2_ttf/sdl2_ttf-config-version.cmake
-          sudo cp ${GITHUB_WORKSPACE}/.github/workflows/helpers/sdl2_ttf-config.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2_ttf/sdl2_ttf-config.cmake
+          sudo cp ${GITHUB_WORKSPACE}/.github/workflows/sdl-cmake-config/sdl2_image-config-version.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2_image/sdl2_image-config-version.cmake
+          sudo cp ${GITHUB_WORKSPACE}/.github/workflows/sdl-cmake-config/sdl2_image-config.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2_image/sdl2_image-config.cmake
+          sudo cp ${GITHUB_WORKSPACE}/.github/workflows/sdl-cmake-config/sdl2_mixer-config-version.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2_mixer/sdl2_mixer-config-version.cmake
+          sudo cp ${GITHUB_WORKSPACE}/.github/workflows/sdl-cmake-config/sdl2_mixer-config.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2_mixer/sdl2_mixer-config.cmake
+          sudo cp ${GITHUB_WORKSPACE}/.github/workflows/sdl-cmake-config/sdl2_ttf-config-version.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2_ttf/sdl2_ttf-config-version.cmake
+          sudo cp ${GITHUB_WORKSPACE}/.github/workflows/sdl-cmake-config/sdl2_ttf-config.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2_ttf/sdl2_ttf-config.cmake
 
       - name: SDL Dependencies (macOs)
         if: runner.os == 'macOS'
@@ -429,8 +429,8 @@ jobs:
       - name: Make scripts executable
         if: runner.os == 'Linux'
         run: |
-          chmod +x scripts/*
-          # chmod +x scripts/run_sanitizers.sh scripts/run_valgrind.sh
+          chmod +x ${GITHUB_WORKSPACE}/.github/workflows/scripts/*
+          # chmod +x ${GITHUB_WORKSPACE}/.github/workflows/scripts/run_sanitizers.sh ${GITHUB_WORKSPACE}/.github/workflows/scripts/run_valgrind.sh
 
       - name: Sanitizers
         uses: GabrielBB/xvfb-action@v1
@@ -442,7 +442,7 @@ jobs:
           EXECUTABLE_NAME: ${{ env.EXECUTABLE_NAME }}
         with:
           run: |
-            ./scripts/run_sanitizers.sh || true
+            ${GITHUB_WORKSPACE}/.github/workflows/scripts/run_sanitizers.sh || true
           working-directory: ${{github.workspace}}
 
       - name: Copy sanitizers DLLs (Windows MSVC)
@@ -473,7 +473,7 @@ jobs:
           EXECUTABLE_NAME: ${{ env.EXECUTABLE_NAME }}
         with:
           run: |
-            ./scripts/run_valgrind.sh || true
+            ${GITHUB_WORKSPACE}/.github/workflows/scripts/run_valgrind.sh || true
           working-directory: ${{github.workspace}}
 
       - name: Set Tag Name
