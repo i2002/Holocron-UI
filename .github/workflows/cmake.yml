@@ -442,7 +442,7 @@ jobs:
           EXECUTABLE_NAME: ${{ env.EXECUTABLE_NAME }}
         with:
           run: |
-            ${GITHUB_WORKSPACE}/.github/workflows/scripts/run_sanitizers.sh || true
+            ./.github/workflows/scripts/run_sanitizers.sh || true
           working-directory: ${{github.workspace}}
 
       - name: Copy sanitizers DLLs (Windows MSVC)
@@ -473,7 +473,7 @@ jobs:
           EXECUTABLE_NAME: ${{ env.EXECUTABLE_NAME }}
         with:
           run: |
-            ${GITHUB_WORKSPACE}/.github/workflows/scripts/run_valgrind.sh || true
+            ./.github/workflows/scripts/run_valgrind.sh || true
           working-directory: ${{github.workspace}}
 
       - name: Set Tag Name
