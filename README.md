@@ -56,4 +56,8 @@ Simple UI toolkit powered by SDL.
 
 ## Resurse
 - https://github.com/albin-johansson/centurion (MIT)
+- https://github.com/libsdl-org/SDL (Zlib)
+- https://github.com/libsdl-org/SDL_image (Zlib)
+- https://github.com/libsdl-org/SDL_mixer (Zlib)
+- https://github.com/libsdl-org/SDL_ttf (Zlib)
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
