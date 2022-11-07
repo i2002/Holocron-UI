@@ -140,17 +140,20 @@ jobs:
       #     sudo apt-get update
       #     sudo apt-get install ...
 
-      - name: Test macOS
-        if: runner.os == 'macOS'
-        run: |
-           brew install sdl2
-           ls /usr/local/Cellar/sdl2
-
-      - name: SDL Dependencies
+      - name: SDL Dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
+
+      - name: SDL Dependencies (macOs)
+        if: runner.os == 'macOS'
+        run: |
+          brew install sdl2
+          brew install sdl2_image
+          brew install sdl2_mixer
+          brew install sdl2_ttf
+
 
       - name: Install clang-tidy and libc++ (Linux Clang 14)
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-14'
