@@ -146,8 +146,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
           sudo mkdir -p /usr/lib/x86_64-linux-gnu/cmake/SDL2_image/
+          sudo mkdir -p /usr/lib/x86_64-linux-gnu/cmake/SDL2_mixer/
+          sudo mkdir -p /usr/lib/x86_64-linux-gnu/cmake/SDL2_ttf/
           sudo cp ${GITHUB_WORKSPACE}/.github/workflows/helpers/sdl2_image-config-version.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2_image/sdl2_image-config-version.cmake
           sudo cp ${GITHUB_WORKSPACE}/.github/workflows/helpers/sdl2_image-config.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2_image/sdl2_image-config.cmake
+          sudo cp ${GITHUB_WORKSPACE}/.github/workflows/helpers/sdl2_mixer-config-version.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2_mixer/sdl2_mixer-config-version.cmake
+          sudo cp ${GITHUB_WORKSPACE}/.github/workflows/helpers/sdl2_mixer-config.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2_mixer/sdl2_mixer-config.cmake
+          sudo cp ${GITHUB_WORKSPACE}/.github/workflows/helpers/sdl2_ttf-config-version.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2_ttf/sdl2_ttf-config-version.cmake
+          sudo cp ${GITHUB_WORKSPACE}/.github/workflows/helpers/sdl2_ttf-config.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2_ttf/sdl2_ttf-config.cmake
 
       - name: SDL Dependencies (macOs)
         if: runner.os == 'macOS'
