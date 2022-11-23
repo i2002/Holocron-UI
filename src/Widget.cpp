@@ -1,25 +1,50 @@
 #include "Widget.h"
 
-Widget::Widget(int size, Widget::Position pos)
+Widget::Widget(Widget *p) : parent{p}
 {
-    this->size = size;
-    this->pos = pos;
+
+}
+
+Widget::~Widget()
+{
+    for(auto &child : children) {
+        delete child;
+    }
+    children.clear();
 }
 
 std::ostream& operator<<(std::ostream& os, const Widget &w)
 {
-    os << "Widget with size: " << w.size << " and position: " << w.pos << "\n";
+    os << "Widget with size: (" << w.allocated_size << ") at position: (" << w.allocated_position << "), with children: (\n";
+    for (const auto &child : w.children) {
+        os << "  - " << child;
+    }
+    os << ")\n";
     return os;
 }
 
-void Widget::render(cen::renderer &renderer, int x, int y)
+cen::iarea Widget::get_requested_size()
 {
-    int delta_x = pos != Widget::VERTICAL ? size : 0;
-    int delta_y = pos != Widget::HORIZONTAL ? size : 0;
-    renderer.draw_line(cen::ipoint(x, y), cen::ipoint{x + delta_x, y + delta_y});
+    return requested_size;
 }
 
-void Widget::destroy()
+cen::iarea Widget::get_allocated_size()
 {
-    // FIXME: implementation
+    return allocated_size;
+}
+
+cen::ipoint Widget::get_allocated_position()
+{
+    return allocated_position;
+}
+
+void Widget::set_allocation(cen::iarea allocated_size, cen::ipoint allocated_position)
+{
+    this->allocated_size = allocated_size;
+    this->allocated_position = allocated_position;
+}
+
+void Widget::request_resize()
+{
+    parent->request_resize();
 }
