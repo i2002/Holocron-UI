@@ -9,25 +9,26 @@
 #include "Widget.h"
 
 
-class Window
+class Window : public Widget
 {
     std::string title;
     cen::color color;
-    std::vector<std::tuple<int, int, Widget>> widgets;
-    
+
     cen::window win;
     cen::renderer renderer;
 
 public:
-    Window(const Window &w);
+    // Window(const Window &w);
     explicit Window(const std::string &t = "Untitled window", const cen::color &color = cen::colors::white);
     ~Window();
-    
-    friend std::ostream& operator<<(std::ostream& os, const Window &w);
-    Window& operator=(const Window &other);
 
     void render();
-    void add_widget(Widget w, int x, int y);
+    
+    // friend std::ostream& operator<<(std::ostream& os, const Window &w);
+    // Window& operator=(const Window &other);
+
+protected:
+    void render_self(cen::renderer &, cen::ipoint) {};
 };
 
 #endif // WINDOW_H
