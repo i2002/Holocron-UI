@@ -22,6 +22,8 @@ public:
     ~Window();
     Widget *clone() const override;
 
+    std::string display_name() const override;
+    void display_attributes(std::ostream& os) const override;
     void render();
     
     // friend std::ostream& operator<<(std::ostream& os, const Window &w);

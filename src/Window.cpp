@@ -33,17 +33,18 @@ Widget* Window::clone() const
     return new Window(*this);
 }
 
-// Window& Window::operator=(const Window &other)
-// {
-//     title = other.title;
-//     color = other.color;
-//     widgets.clear();
-//     for(auto it : other.widgets) {
-//         widgets.push_back(it); // FIXME: shallow copy vs full copy?
-//     }
+std::string Window::display_name() const
+{
+    return "Window";
+}
 
-//     return *this;
-// }
+void Window::display_attributes(std::ostream& os) const
+{
+    Widget::display_attributes(os);
+    os << ", "
+       << "title: \"" << title << "\", "
+       << "color: " << color;
+}
 
 void Window::render()
 {

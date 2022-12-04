@@ -27,15 +27,24 @@ Widget::~Widget()
 }
 
 
-// ---------------- Operator overloading -----------------
+// ----------------- Operator overloading -----------------
+void Widget::display_attributes(std::ostream& os) const
+{
+    os << "size: " << size;
+}
+
 std::ostream& operator<<(std::ostream& os, const Widget &w)
 {
-    // TODO: support for derivate specific info (type name and field information)
-    os << "widget with size: (" << w.allocated_size << "), with children: (\n";
+    os << w.display_name() << " (";
+    w.display_attributes(os); //FIXME: maybe return ostream for chaining?
+    os << ")";
 
     // TODO: better format for children tree
-    for (const auto &child : w.children) {
-        os << "  - at position: " << child.first << ", "  << child.second;
+    if (!w.children.empty()) {
+        os << ", with children: (\n";
+        for (const auto &child : w.children) {
+            os << "  - at position " << child.first << " with address " << child.second << ": " << *child.second;
+        }
     }
     os << ")\n";
     return os;

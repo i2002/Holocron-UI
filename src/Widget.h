@@ -3,6 +3,7 @@
 
 #include <centurion.hpp>
 #include <vector>
+#include <string>
 #include <tuple>
 
 class Widget
@@ -25,6 +26,10 @@ public:
 
     Widget &operator=(Widget &&other) = default; // QUESTION: is there anything I can do besides copying the object pointer?; why is this needed?
     virtual Widget* clone() const = 0;
+
+    // virtual void display();
+    virtual std::string display_name() const = 0;
+    virtual void display_attributes(std::ostream& os) const;
     friend std::ostream& operator<<(std::ostream& os, const Widget &w);
     cen::iarea get_size();
     virtual void add_child(Widget *w, cen::ipoint pos);
