@@ -1,16 +1,9 @@
 #include "Window.h"
+#include <iostream>
 
-// Window::Window(const Window &w) :
-//     title{w.title},
-//     color{w.color},
-//     widgets{w.widgets},
-//     win{w.title, cen::iarea{1000, 500}},
-//     renderer{win.make_renderer()}
-// {
-// }
-
-Window::Window(const std::string &t, const cen::color &color) :
-    win{t, cen::iarea{1000, 500}},
+Window::Window(const std::string &t, const cen::iarea size, const cen::color &color) :
+    Widget{size},
+    win{t, size},
     renderer{win.make_renderer()}
 {
     this->title = t;
@@ -18,20 +11,27 @@ Window::Window(const std::string &t, const cen::color &color) :
     win.show();
 }
 
+Window::Window(const Window &w) :
+    Widget{w},
+    title{w.title},
+    color{w.color},
+    win{"AAAA", size}, //FIXME: remove debug messages
+    renderer{win.make_renderer()}
+{
+    std::cout << "window cc\n"; //FIXME: remove debug messages
+}
+
 Window::~Window()
 {
     win.hide();
+    std::cout << "window destrcutor\n"; // FIXME: remove debug messages
 }
 
-// std::ostream& operator<<(std::ostream &os, const Window &w)
-// {
-//     os << "Window with title: \"" << w.title <<"\" and widgets: {\n";
-//     for(auto it: w.widgets) {
-//         os << "- at x: " << std::get<0>(it) << " and y: " << std::get<1>(it) << " " << std::get<2>(it);
-//     }
-//     os << "}\n";
-//     return os;
-// }
+Widget* Window::clone() const
+{
+    std::cout << "window clone\n"; // FIXME: remove debug messages
+    return new Window(*this);
+}
 
 // Window& Window::operator=(const Window &other)
 // {

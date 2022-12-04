@@ -18,9 +18,9 @@ class Window : public Widget
     cen::renderer renderer;
 
 public:
-    // Window(const Window &w);
-    explicit Window(const std::string &t = "Untitled window", const cen::color &color = cen::colors::white);
+    explicit Window(const std::string &t = "Untitled window", const cen::iarea size = {1000, 500}, const cen::color &color = cen::colors::white);
     ~Window();
+    Widget *clone() const override;
 
     void render();
     
@@ -28,7 +28,8 @@ public:
     // Window& operator=(const Window &other);
 
 protected:
-    void render_self(cen::renderer &, cen::ipoint) {};
+    Window(const Window &other);
+    void render_self(cen::renderer &, cen::ipoint) const override {};
 };
 
 #endif // WINDOW_H
