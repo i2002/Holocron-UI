@@ -2,14 +2,14 @@
 #include "Widget.h"
 
 Application::Application() :
-    main_window{"Titlu aplicatie", cen::colors::aqua}
+    main_window{"Titlu aplicatie", cen::iarea{1000, 500}, cen::colors::aqua}
 {
-    main_window.add_widget(Widget{100}, 10, 10);
-    main_window.add_widget(Widget{100}, 10, 60);
-    main_window.add_widget(Widget{50, Widget::VERTICAL}, 10, 10);
-    main_window.add_widget(Widget{50, Widget::VERTICAL}, 110, 10);
-    main_window.add_widget(Widget{50, Widget::DIAGONAL}, 10, 10);
-    main_window.add_widget(Widget{50, Widget::DIAGONAL}, 60, 10);
+    // main_window.add_child(Widget{100}, 10, 10);
+    // main_window.add_child(Widget{100}, 10, 60);
+    // main_window.add_child(Widget{50, Widget::VERTICAL}, 10, 10);
+    // main_window.add_child(Widget{50, Widget::VERTICAL}, 110, 10);
+    // main_window.add_child(Widget{50, Widget::DIAGONAL}, 10, 10);
+    // main_window.add_child(Widget{50, Widget::DIAGONAL}, 60, 10);
 }
 
 void Application::run()
