@@ -1,15 +1,26 @@
 #include "Widget.h"
+#include <iostream> //FIXME: remove debug messages
 
-
-// ------------ Constructors and destructors ---------------
-Widget::Widget(Widget *p) : parent{p}
+// ------------- Constructors and destructors -------------
+Widget::Widget(cen::iarea size, Widget *p) : 
+    parent{p}, size{size}
 {
 
 }
 
+Widget::Widget(const Widget &other) :
+    parent{other.parent}, size{other.size}
+{
+    std::cout << "widget cc\n"; //FIXME: remove debug messages
+    for (const auto &child : other.children) {
+        children.push_back({child.first, child.second->clone()});
+    }
+}
+
 Widget::~Widget()
 {
-    for (auto &child : children) {
+    std::cout << "widget destructor\n"; //FIXME: remove debug messages
+    for (const auto &child : children) {
         delete child.second;
     }
     children.clear();
@@ -31,15 +42,15 @@ std::ostream& operator<<(std::ostream& os, const Widget &w)
 }
 
 
-// ----------------- Getters and setters ------------------------
-cen::iarea Widget::get_allocated_size()
+// ------------------ Getters and setters -----------------
+cen::iarea Widget::get_size()
 {
-    return allocated_size;
+    return size;
 }
 
-void Widget::set_allocation(cen::iarea allocated_size)
+void Widget::set_size(cen::iarea size)
 {
-    this->allocated_size = allocated_size;
+    this->size = size;
 }
 
 void Widget::add_child(Widget *w, cen::ipoint pos)
@@ -50,7 +61,7 @@ void Widget::add_child(Widget *w, cen::ipoint pos)
 }
 
 
-// ------------------- Internal methods --------------------------
+// ------------------- Internal methods -------------------
 void Widget::render(cen::renderer &renderer, cen::ipoint offset)
 {
     // render children
