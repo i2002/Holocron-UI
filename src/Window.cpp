@@ -8,6 +8,11 @@ Window::Window(const std::string &t, const cen::iarea &size, const cen::color &c
     this->color = color;
 }
 
+Window::~Window()
+{
+    win.hide();
+}
+
 Window::Window(const Window &w) :
     Widget{w},
     color{w.color},
@@ -16,15 +21,24 @@ Window::Window(const Window &w) :
 {
 }
 
-Window::~Window()
+Window& Window::operator=(Window other)
 {
-    win.hide();
-    std::cout << "window destrcutor\n"; // FIXME: remove debug messages
+    swap(*this, other);
+    return *this;
 }
 
 Widget* Window::clone() const
 {
     return new Window(*this);
+}
+
+void swap(Window &first, Window &second)
+{
+    // enable ADL
+    using std::swap;
+    swap(static_cast<Widget&>(first), static_cast<Widget&>(second));
+    swap(first.win, second.win);
+    swap(first.renderer, second.renderer);
 }
 
 std::string Window::display_name() const
