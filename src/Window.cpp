@@ -1,24 +1,19 @@
 #include "Window.h"
-#include <iostream>
 
-Window::Window(const std::string &t, const cen::iarea size, const cen::color &color) :
+Window::Window(const std::string &t, const cen::iarea &size, const cen::color &color) :
     Widget{size},
     win{t, size},
     renderer{win.make_renderer()}
 {
-    this->title = t;
     this->color = color;
-    win.show();
 }
 
 Window::Window(const Window &w) :
     Widget{w},
-    title{w.title},
     color{w.color},
-    win{"AAAA", size}, //FIXME: remove debug messages
+    win{w.win.title(), size},
     renderer{win.make_renderer()}
 {
-    std::cout << "window cc\n"; //FIXME: remove debug messages
 }
 
 Window::~Window()
@@ -29,7 +24,6 @@ Window::~Window()
 
 Widget* Window::clone() const
 {
-    std::cout << "window clone\n"; // FIXME: remove debug messages
     return new Window(*this);
 }
 
@@ -42,7 +36,7 @@ void Window::display_attributes(std::ostream& os) const
 {
     Widget::display_attributes(os);
     os << ", "
-       << "title: \"" << title << "\", "
+       << "title: \"" << win.title() << "\", "
        << "color: " << color;
 }
 

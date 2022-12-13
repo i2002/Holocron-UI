@@ -18,9 +18,7 @@ class Window : public Widget
     cen::renderer renderer;
 
 public:
-    explicit Window(const std::string &t = "Untitled window", const cen::iarea size = {1000, 500}, const cen::color &color = cen::colors::white);
-    ~Window();
-    Widget *clone() const override;
+    explicit Window(const std::string &t = "Untitled window", const cen::iarea &size = {1000, 500}, const cen::color &color = cen::colors::white);
 
     std::string display_name() const override;
     void display_attributes(std::ostream& os) const override;
