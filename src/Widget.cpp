@@ -64,9 +64,8 @@ void Widget::set_size(cen::iarea size)
 
 void Widget::add_child(Widget *w, cen::ipoint pos)
 {
-    // FIXME: should I clone the widget so that the caller function is responsible for the object created there and here I'm responsile for the copy?
     // TODO: check if widget fits
-    children.push_back({pos, w});
+    children.emplace_back(pos, w->clone());
 }
 
 
