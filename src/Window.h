@@ -22,9 +22,8 @@ public:
     void display_attributes(std::ostream& os) const override;
 
     void render();
-    
-    // friend std::ostream& operator<<(std::ostream& os, const Window &w);
-    // Window& operator=(const Window &other);
+    void show();
+    void hide();
 
 protected:
     Window(const Window &other);

@@ -65,3 +65,13 @@ void Window::render()
     // present rendered items
     renderer.present();
 }
+
+void Window::show()
+{
+    win.show();
+}
+
+void Window::hide()
+{
+    win.hide();
+}
