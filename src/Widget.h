@@ -11,7 +11,6 @@ class Widget
 public:
 
 protected:
-    // FIXME: hide data from derivates and force them to use getters and setters?
     // TODO: sizing based on widget size requirement? (-> scrolling)
     // TODO: margins in relation to parent (px or %)
     Widget *parent;
@@ -21,23 +20,23 @@ protected:
 public:
     // TODO: switch to using smart pointers
     explicit Widget(cen::iarea size = {0, 0}, Widget *parent = nullptr);
-    Widget(Widget &&other) = default;
     virtual ~Widget();
-
-    Widget &operator=(Widget &&other) = default; // QUESTION: is there anything I can do besides copying the object pointer?; why is this needed?
-    virtual Widget* clone() const = 0;
+    Widget(Widget &&other) = default;
+    Widget &operator=(Widget &&other) = default;
+    [[nodiscard]] virtual Widget* clone() const = 0;
+    friend void swap(Widget &first, Widget &second);
 
     // virtual void display();
-    virtual std::string display_name() const = 0;
+    [[nodiscard]] virtual std::string display_name() const = 0;
     virtual void display_attributes(std::ostream& os) const;
     friend std::ostream& operator<<(std::ostream& os, const Widget &w);
     cen::iarea get_size();
-    virtual void add_child(Widget *w, cen::ipoint pos);
+    void add_child(Widget *w, cen::ipoint pos);
 
 protected:
     // prevent object slicing when copying
     Widget(const Widget &other);
-    Widget &operator=(const Widget &other) = default; // QUESTION: what to do here?
+    // QUESTION: is it ok to not have an assigment operator for abstract class?
 
     // TODO: surface rendering: every widget has it's own surface that is merged by the parent + surface caching
     void render(cen::renderer &renderer, cen::ipoint offset);

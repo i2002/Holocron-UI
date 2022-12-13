@@ -1,29 +1,35 @@
 #include "Widget.h"
-#include <iostream> //FIXME: remove debug messages
 
 // ------------- Constructors and destructors -------------
 Widget::Widget(cen::iarea size, Widget *p) : 
     parent{p}, size{size}
-{
+{}
 
+Widget::~Widget()
+{
+    for (const auto &child : children) {
+        delete child.second;
+    }
+    children.clear();
 }
 
 Widget::Widget(const Widget &other) :
     parent{other.parent}, size{other.size}
 {
-    std::cout << "widget cc\n"; //FIXME: remove debug messages
     for (const auto &child : other.children) {
-        children.push_back({child.first, child.second->clone()});
+        children.emplace_back(child.first, child.second->clone());
     }
 }
 
-Widget::~Widget()
+void swap(Widget &first, Widget &second)
 {
-    std::cout << "widget destructor\n"; //FIXME: remove debug messages
-    for (const auto &child : children) {
-        delete child.second;
-    }
-    children.clear();
+    // enable ADL
+    using std::swap;
+
+    // swap attributes
+    swap(first.parent, second.parent);
+    swap(first.children, second.children);
+    swap(first.size, second.size);
 }
 
 
@@ -36,7 +42,7 @@ void Widget::display_attributes(std::ostream& os) const
 std::ostream& operator<<(std::ostream& os, const Widget &w)
 {
     os << w.display_name() << " (";
-    w.display_attributes(os); //FIXME: maybe return ostream for chaining?
+    w.display_attributes(os); //FIXME: a way to chain these?
     os << ")";
 
     // TODO: better format for children tree
@@ -57,9 +63,9 @@ cen::iarea Widget::get_size()
     return size;
 }
 
-void Widget::set_size(cen::iarea size)
+void Widget::set_size(cen::iarea size_)
 {
-    this->size = size;
+    size = size_;
 }
 
 void Widget::add_child(Widget *w, cen::ipoint pos)
