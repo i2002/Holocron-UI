@@ -1,18 +1,28 @@
 #include "DemoWidget.h"
 
-DemoWidget::DemoWidget(const cen::iarea size, const cen::color &color) :
+DemoWidget::DemoWidget(const cen::iarea &size, const cen::color &color) :
     Widget{size},
     color{color}
 {}
 
-DemoWidget::~DemoWidget()
+DemoWidget& DemoWidget::operator=(DemoWidget other)
 {
-
+    swap(*this, other);
+    return *this;
 }
 
 Widget* DemoWidget::clone() const 
 {
     return new DemoWidget(*this);
+}
+
+// FIXME: is it useful given that assignment operator is protected?
+void swap(DemoWidget &first, DemoWidget &second)
+{
+    // enable ADL
+    using std::swap;
+    swap(static_cast<Widget&>(first), static_cast<Widget&>(second));
+    swap(first.color, second.color);
 }
 
 std::string DemoWidget::display_name() const
