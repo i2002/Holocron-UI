@@ -42,6 +42,45 @@ void test_constructor_implementation()
     SDL_Delay(5000);
 }
 
+void test_widget_placement()
+{
+    Window w{"Titlu"};
+    Widget *ch1 = new DemoWidget{cen::iarea{30, 30}, cen::colors::aqua};
+    Widget *ch2 = new DemoWidget{cen::iarea{30, 30}, cen::colors::red};
+    Widget *ch3 = new DemoWidget{cen::iarea{30, 30}, cen::colors::yellow};
+    Widget *ch4 = new DemoWidget{cen::iarea{30, 30}, cen::colors::dark_gray};
+    Widget *ch5 = new DemoWidget{cen::iarea{60, 60}, cen::colors::green};
+
+    w.add_child(ch1, cen::ipoint{50, 50});
+    w.add_child(ch2, cen::ipoint{80, 65});
+    w.add_child(ch3, cen::ipoint{50, 80});
+    w.add_child(ch4, cen::ipoint{20, 20});
+    w.add_child(ch5, cen::ipoint{20, 20});
+    w.show();
+    w.render();
+
+    SDL_Delay(5000);
+    delete ch1;
+    delete ch2;
+    delete ch3;
+    delete ch4;
+    delete ch5;
+}
+
+void tests(int test)
+{
+    switch (test) {
+        case 1:
+            test_constructor_implementation();
+            break;
+        case 2:
+            test_widget_placement();
+            break;
+        default:
+            std::cout << "Invalid test\n";
+            break;
+    }
+}
 
 int main(int, char**)
 {
@@ -53,6 +92,6 @@ int main(int, char**)
     // std::cout << a;
     // a.run();
 
-    test_constructor_implementation();
+    tests(2);
     return 0;
 }

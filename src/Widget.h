@@ -41,6 +41,7 @@ protected:
     // TODO: surface rendering: every widget has it's own surface that is merged by the parent + surface caching
     void render(cen::renderer &renderer, cen::ipoint offset);
     virtual void render_self(cen::renderer &renderer, cen::ipoint offset) const  = 0;
+    virtual bool check_collisions(Widget *w, cen::ipoint pos);
     void set_size(cen::iarea size);
     // TODO: implement resizing request (when internal widget structure changed)
 };

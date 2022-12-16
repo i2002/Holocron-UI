@@ -70,7 +70,10 @@ void Widget::set_size(cen::iarea size_)
 
 void Widget::add_child(Widget *w, cen::ipoint pos)
 {
-    // TODO: check if widget fits
+    if (check_collisions(w, pos)) {
+        return;
+    }
+
     children.emplace_back(pos, w->clone());
 }
 
@@ -85,4 +88,20 @@ void Widget::render(cen::renderer &renderer, cen::ipoint offset)
 
     // render self
     render_self(renderer, offset);
+}
+
+bool Widget::check_collisions(Widget *w, cen::ipoint pos) {
+    cen::iarea widget_size = w->get_size();
+
+    for (const auto& [child_pos, child] : children) {
+        cen::iarea child_size = child->get_size();
+        bool outside_x = pos.x() >= child_pos.x() + child_size.width || pos.x() + widget_size.width <= child_pos.x();
+        bool outside_y = pos.y() >= child_pos.y() + child_size.height || pos.y() + widget_size.height <= child_pos.y();
+
+        if (!(outside_x || outside_y)) {
+            return true;
+        }
+    }
+
+    return false;
 }
