@@ -1,5 +1,6 @@
 #include "Application.h"
 #include "DemoWidget.h"
+#include "GridContainer.h"
 #include <iostream>
 
 // test functions
@@ -8,7 +9,7 @@ void test_constructor_implementation()
     // static tests
     Window wind1;
     wind1.show();
-    Window wind2{"Titlu"};
+    Window wind2{"Title"};
     DemoWidget wdg1{cen::iarea{20,20}};
     wind2.add_child(&wdg1, cen::ipoint{10, 10});
     wind2.show();
@@ -44,7 +45,7 @@ void test_constructor_implementation()
 
 void test_widget_placement()
 {
-    Window w{"Titlu"};
+    Window w{"Title"};
     Widget *ch1 = new DemoWidget{cen::iarea{30, 30}, cen::colors::aqua};
     Widget *ch2 = new DemoWidget{cen::iarea{30, 30}, cen::colors::red};
     Widget *ch3 = new DemoWidget{cen::iarea{30, 30}, cen::colors::yellow};
@@ -67,6 +68,30 @@ void test_widget_placement()
     delete ch5;
 }
 
+void test_containers()
+{
+    Window w("Title");
+    auto *cont1 = new GridContainer(2, 2);
+    auto *cont2 = new GridContainer(1, 3);
+    auto *ch1 = new DemoWidget(cen::iarea{10, 10}, cen::colors::aqua);
+    auto *ch2 = new DemoWidget(cen::iarea{20, 20}, cen::colors::red);
+    auto *ch3 = new DemoWidget(cen::iarea{10, 10}, cen::colors::yellow);
+    cont2->add_child(ch2, 0, 0);
+    cont2->add_child(ch3, 0, 1, 1, 2);
+    cont1->add_child(ch1, 0, 0, 2);
+    cont1->add_child(cont2, 1, 1);
+    w.add_child(cont1, cen::ipoint{0, 0});
+    w.show();
+    w.render();
+    std::cout << w;
+
+    SDL_Delay(5000);
+    delete cont1;
+    delete ch1;
+    delete ch2;
+    delete ch3;
+}
+
 void tests(int test)
 {
     switch (test) {
@@ -75,6 +100,9 @@ void tests(int test)
             break;
         case 2:
             test_widget_placement();
+            break;
+        case 3:
+            test_containers();
             break;
         default:
             std::cout << "Invalid test\n";
@@ -92,6 +120,6 @@ int main(int, char**)
     // std::cout << a;
     // a.run();
 
-    tests(2);
+    tests(3);
     return 0;
 }
