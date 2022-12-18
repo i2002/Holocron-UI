@@ -8,18 +8,12 @@
 
 class Widget
 {
-public:
-
 protected:
-    // TODO: sizing based on widget size requirement? (-> scrolling)
-    // TODO: margins in relation to parent (px or %)
-    Widget *parent;
-    std::vector<std::pair<cen::ipoint, Widget*>> children;
-    cen::iarea size;
+    enum class SizingPolicy {FIXED_SIZE, FIT_PARENT};
 
 public:
     // TODO: switch to using smart pointers
-    explicit Widget(cen::iarea size = {0, 0}, Widget *parent = nullptr);
+    explicit Widget(cen::iarea size = {0, 0}, Widget *parent = nullptr, SizingPolicy policy = SizingPolicy::FIXED_SIZE);
     virtual ~Widget();
     Widget(Widget &&other) = default;
     Widget &operator=(Widget &&other) = default;
@@ -30,7 +24,10 @@ public:
     [[nodiscard]] virtual std::string display_name() const = 0;
     virtual void display_attributes(std::ostream& os) const;
     friend std::ostream& operator<<(std::ostream& os, const Widget &w);
-    cen::iarea get_size();
+    cen::iarea get_size() const;
+    void set_size(cen::iarea size);
+    cen::iarea get_allocated_size() const;
+    virtual void set_allocated_size(cen::iarea size);
     void add_child(Widget *w, cen::ipoint pos);
 
 protected:
@@ -41,9 +38,16 @@ protected:
     // TODO: surface rendering: every widget has it's own surface that is merged by the parent + surface caching
     void render(cen::renderer &renderer, cen::ipoint offset);
     virtual void render_self(cen::renderer &renderer, cen::ipoint offset) const  = 0;
-    virtual bool check_collisions(Widget *w, cen::ipoint pos);
-    void set_size(cen::iarea size);
+    bool check_collisions(Widget *w, cen::ipoint pos) const;
     // TODO: implement resizing request (when internal widget structure changed)
+
+    // TODO: sizing based on widget size requirement? (-> scrolling)
+    // TODO: margins in relation to parent (px or %)
+    Widget *parent;
+    std::vector<std::pair<cen::ipoint, Widget*>> children;
+    cen::iarea size;
+    cen::iarea allocated_size;
+    SizingPolicy sizing_policy;
 };
 
 #endif // WIDGET_H
