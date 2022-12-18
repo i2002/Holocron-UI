@@ -1,7 +1,7 @@
 #include "DemoWidget.h"
 
 DemoWidget::DemoWidget(const cen::iarea &size, const cen::color &color) :
-    Widget{size},
+    Widget{size, nullptr, SizingPolicy::FIT_PARENT},
     color{color}
 {}
 
@@ -33,8 +33,7 @@ std::string DemoWidget::display_name() const
 void DemoWidget::display_attributes(std::ostream& os) const
 {
     Widget::display_attributes(os);
-    os << ", "
-       << "color: " << color;
+    os << ", color: " << color;
 }
 
 void DemoWidget::render_self(cen::renderer &renderer, cen::ipoint offset) const

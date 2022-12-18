@@ -58,6 +58,7 @@ void Window::render()
 {
     // window background color
     renderer.clear_with(color);
+    children[0].second->set_allocated_size(size); // FIXME: window should have it's own allocation
 
     // parent behaviour (render children)
     Widget::render(renderer, {0, 0});
