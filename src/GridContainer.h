@@ -11,13 +11,13 @@ protected:
     struct Position {
         int col, row, span_cols, span_rows;
 
-        cen::iarea get_child_size(const GridContainer &container) {
+        cen::iarea get_child_size(const GridContainer &container) const {
             int row_size = container.size.height / container.rows;
             int col_size = container.size.width / container.cols;
             return {span_cols * col_size, span_rows * row_size};
         }
 
-        cen::ipoint get_child_pos(const GridContainer &container) {
+        cen::ipoint get_child_pos(const GridContainer &container) const {
             int row_size = container.size.height / container.rows;
             int col_size = container.size.width / container.cols;
             return {col * col_size, row * row_size};

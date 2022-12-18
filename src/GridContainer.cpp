@@ -42,17 +42,14 @@ void GridContainer::display_attributes(std::ostream& os) const
        << ", rows: " << rows;
 }
 
-void GridContainer::set_allocated_size(cen::iarea size)
+void GridContainer::set_allocated_size(cen::iarea size_)
 {
-    Widget::set_allocated_size(size);
-    int row_size = size.height / rows;
-    int col_size = size.width / cols;
+    Widget::set_allocated_size(size_);
 
     for (size_t i = 0; i < children.size(); i++) {
-        auto& [pos, w] = children[i];
-        const auto& [col, row, span_cols, span_rows] = positioning_data[i];
-        pos = {col * col_size, row * row_size};
-        w->set_allocated_size(cen::iarea {span_cols * col_size, span_rows * row_size});
+        const auto& grid_pos= positioning_data[i];
+        children[i].first = grid_pos.get_child_pos(*this);
+        children[i].second->set_allocated_size(grid_pos.get_child_size(*this));
     }
 }
 
