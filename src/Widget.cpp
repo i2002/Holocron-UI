@@ -1,17 +1,9 @@
 #include "Widget.h"
 
 // ------------- Constructors and destructors -------------
-Widget::Widget(cen::iarea size, Widget *p, SizingPolicy policy) :
-    parent{p}, size{size}, sizing_policy{policy}
+Widget::Widget(cen::iarea size, SizingPolicy policy) :
+    size{size}, sizing_policy{policy}
 {}
-
-Widget::~Widget()
-{
-    for (const auto &child : children) {
-        delete child.second;
-    }
-    children.clear();
-}
 
 Widget::Widget(const Widget &other) :
     parent{other.parent}, size{other.size}, sizing_policy{other.sizing_policy}
@@ -87,7 +79,7 @@ void Widget::set_allocated_size(cen::iarea size_)
 // FIXME: where to put generic child management?
 // (context: usually container widgets have children and they are responsible for the way they are added and sized)
 // (maybe create a container derived class for all containers)
-void Widget::add_child(Widget *w, cen::ipoint pos)
+void Widget::add_child(const std::shared_ptr<Widget> &w, cen::ipoint pos)
 {
     if (check_collisions(w, pos)) {
         return;
@@ -110,7 +102,7 @@ void Widget::render(cen::renderer &renderer, cen::ipoint offset)
     render_self(renderer, offset);
 }
 
-bool Widget::check_collisions(Widget *w, cen::ipoint pos) const
+bool Widget::check_collisions(const std::shared_ptr<Widget> &w, cen::ipoint pos) const
 {
     cen::iarea widget_size = w->get_size();
 

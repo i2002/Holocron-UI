@@ -1,7 +1,7 @@
 #include "DemoWidget.h"
 
 DemoWidget::DemoWidget(const cen::iarea &size, const cen::color &color) :
-    Widget{size, nullptr, SizingPolicy::FIT_PARENT},
+    Widget{size, SizingPolicy::FIT_PARENT},
     color{color}
 {}
 
@@ -11,9 +11,9 @@ DemoWidget& DemoWidget::operator=(DemoWidget other)
     return *this;
 }
 
-Widget* DemoWidget::clone() const 
+std::shared_ptr<Widget> DemoWidget::clone() const
 {
-    return new DemoWidget(*this);
+    return std::make_shared<DemoWidget>(*this);
 }
 
 // FIXME: is it useful given that assignment operator is protected?

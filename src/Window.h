@@ -1,6 +1,7 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+#include <memory>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -13,9 +14,12 @@ class Window : public Widget
 public:
     explicit Window(const std::string &t = "Untitled window", const cen::iarea &size = {1000, 500}, const cen::color &color = cen::colors::white);
     ~Window() override;
+    Window(const Window &other);
     Window(Window &&other) = default;
+
+    Window& operator=(Window other);
     Window &operator=(Window &&other) = default;
-    [[nodiscard]] Widget *clone() const override;
+    [[nodiscard]] std::shared_ptr<Widget> clone() const override;
     friend void swap(Window &first, Window &second);
 
     [[nodiscard]] std::string display_name() const override;
@@ -26,8 +30,6 @@ public:
     void hide();
 
 protected:
-    Window(const Window &other);
-    Window& operator=(Window other);
     void render_self(cen::renderer &, cen::ipoint) const override {};
 
 private:

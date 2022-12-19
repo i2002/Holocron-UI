@@ -5,7 +5,7 @@
 #include "GridContainer.h"
 
 GridContainer::GridContainer(int cols, int rows) :
-    Widget{{0, 0}, nullptr, SizingPolicy::FIT_PARENT},
+    Widget{{0, 0}, SizingPolicy::FIT_PARENT},
     cols{cols}, rows{rows}
 {}
 
@@ -15,9 +15,9 @@ GridContainer& GridContainer::operator=(GridContainer other)
     return *this;
 }
 
-Widget* GridContainer::clone() const
+std::shared_ptr<Widget> GridContainer::clone() const
 {
-    return new GridContainer(*this);
+    return std::make_shared<GridContainer>(*this);
 }
 
 // FIXME: is it necessary if I only swap all attributes (isn't that done by default?)
@@ -62,7 +62,7 @@ void GridContainer::render_self(cen::renderer &, cen::ipoint ) const
     renderer.set_color(prev_color);*/
 }
 
-void GridContainer::add_child(Widget *w, int col, int row, int span_cols, int span_rows)
+void GridContainer::add_child(const std::shared_ptr<Widget> &w, int col, int row, int span_cols, int span_rows)
 {
     Position p{col, row, span_cols, span_rows}; // TODO: throw if invalid data
     if (check_collisions(p)) {

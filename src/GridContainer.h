@@ -2,6 +2,7 @@
 #define GRIDCONTAINER_H
 
 #include "Widget.h"
+#include <memory>
 #include <vector>
 #include <tuple>
 
@@ -26,20 +27,21 @@ protected:
 
 public:
     GridContainer(int cols, int rows);
+    GridContainer(const GridContainer &other) = default;
     GridContainer(GridContainer &&other) = default;
+
+    GridContainer& operator=(GridContainer other);
     GridContainer &operator=(GridContainer &&other) = default;
-    [[nodiscard]] Widget *clone() const override;
+    [[nodiscard]] std::shared_ptr<Widget> clone() const override;
     friend void swap(GridContainer &first, GridContainer &second);
 
     [[nodiscard]] std::string display_name() const override;
     void display_attributes(std::ostream& os) const override;
 
     void set_allocated_size(cen::iarea size) override;
-    void add_child(Widget *w, int col, int row, int span_cols = 1, int span_rows = 1);
+    void add_child(const std::shared_ptr<Widget> &w, int col, int row, int span_cols = 1, int span_rows = 1);
 
 protected:
-    GridContainer(const GridContainer &other) = default;
-    GridContainer& operator=(GridContainer other);
     void render_self(cen::renderer &renderer, cen::ipoint offset) const override;
     bool check_collisions(Position pos) const;
 

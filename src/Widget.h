@@ -2,6 +2,7 @@
 #define WIDGET_H
 
 #include <centurion.hpp>
+#include <memory>
 #include <vector>
 #include <string>
 #include <tuple>
@@ -13,11 +14,13 @@ protected:
 
 public:
     // TODO: switch to using smart pointers
-    explicit Widget(cen::iarea size = {0, 0}, Widget *parent = nullptr, SizingPolicy policy = SizingPolicy::FIXED_SIZE);
-    virtual ~Widget();
+    // FIXME: parent ref management
+    explicit Widget(cen::iarea size = {0, 0}, SizingPolicy policy = SizingPolicy::FIXED_SIZE);
+    virtual ~Widget() = default;
     Widget(Widget &&other) = default;
+
     Widget &operator=(Widget &&other) = default;
-    [[nodiscard]] virtual Widget* clone() const = 0;
+    [[nodiscard]] virtual std::shared_ptr<Widget> clone() const = 0;
     friend void swap(Widget &first, Widget &second);
 
     // virtual void display();
@@ -28,7 +31,7 @@ public:
     void set_size(cen::iarea size);
     cen::iarea get_allocated_size() const;
     virtual void set_allocated_size(cen::iarea size);
-    void add_child(Widget *w, cen::ipoint pos);
+    void add_child(const std::shared_ptr<Widget> &w, cen::ipoint pos);
 
 protected:
     // prevent object slicing when copying
@@ -38,13 +41,13 @@ protected:
     // TODO: surface rendering: every widget has it's own surface that is merged by the parent + surface caching
     void render(cen::renderer &renderer, cen::ipoint offset);
     virtual void render_self(cen::renderer &renderer, cen::ipoint offset) const  = 0;
-    bool check_collisions(Widget *w, cen::ipoint pos) const;
+    bool check_collisions(const std::shared_ptr<Widget> &w, cen::ipoint pos) const;
     // TODO: implement resizing request (when internal widget structure changed)
 
     // TODO: sizing based on widget size requirement? (-> scrolling)
     // TODO: margins in relation to parent (px or %)
-    Widget *parent;
-    std::vector<std::pair<cen::ipoint, Widget*>> children;
+    std::weak_ptr<Widget> parent;
+    std::vector<std::pair<cen::ipoint, std::shared_ptr<Widget>>> children;
     cen::iarea size;
     cen::iarea allocated_size;
     SizingPolicy sizing_policy;

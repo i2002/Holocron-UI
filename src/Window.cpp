@@ -27,9 +27,9 @@ Window& Window::operator=(Window other)
     return *this;
 }
 
-Widget* Window::clone() const
+std::shared_ptr<Widget> Window::clone() const
 {
-    return new Window(*this);
+    return std::make_shared<Window>(*this);
 }
 
 void swap(Window &first, Window &second)
