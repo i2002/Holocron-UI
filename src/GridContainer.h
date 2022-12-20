@@ -1,28 +1,15 @@
-#ifndef GRIDCONTAINER_H
-#define GRIDCONTAINER_H
+#ifndef GRID_CONTAINER_H
+#define GRID_CONTAINER_H
 
-#include "Widget.h"
+#include "Container.h"
 #include <memory>
 #include <vector>
-#include <tuple>
 
-class GridContainer : public Widget
+class GridContainer : public Container
 {
 protected:
     struct Position {
         int col, row, span_cols, span_rows;
-
-        cen::iarea get_child_size(const GridContainer &container) const {
-            int row_size = container.size.height / container.rows;
-            int col_size = container.size.width / container.cols;
-            return {span_cols * col_size, span_rows * row_size};
-        }
-
-        cen::ipoint get_child_pos(const GridContainer &container) const {
-            int row_size = container.size.height / container.rows;
-            int col_size = container.size.width / container.cols;
-            return {col * col_size, row * row_size};
-        }
     };
 
 public:
@@ -38,12 +25,12 @@ public:
     [[nodiscard]] std::string display_name() const override;
     void display_attributes(std::ostream& os) const override;
 
-    void set_allocated_size(cen::iarea size) override;
     void add_child(const std::shared_ptr<Widget> &w, int col, int row, int span_cols = 1, int span_rows = 1);
 
 protected:
-    void render_self(cen::renderer &renderer, cen::ipoint offset) const override;
-    bool check_collisions(Position pos) const;
+    [[nodiscard]] cen::ipoint get_child_position(size_t index) const override;
+    [[nodiscard]] cen::iarea get_child_allocation(size_t index) const override;
+    [[nodiscard]] bool check_collisions(Position pos) const;
 
 private:
     int cols;
@@ -51,5 +38,4 @@ private:
     std::vector<Position> positioning_data;
 };
 
-
-#endif // GRIDCONTAINER_H
+#endif // GRID_CONTAINER_H

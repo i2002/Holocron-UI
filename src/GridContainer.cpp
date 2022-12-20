@@ -5,7 +5,7 @@
 #include "GridContainer.h"
 
 GridContainer::GridContainer(int cols, int rows) :
-    Widget{{0, 0}, SizingPolicy::FIT_PARENT},
+    Container{{0, 0}, SizingPolicy::FIT_PARENT},
     cols{cols}, rows{rows}
 {}
 
@@ -25,7 +25,7 @@ void swap(GridContainer &first, GridContainer &second)
 {
     // enable ADL
     using std::swap;
-    swap(static_cast<Widget&>(first), static_cast<Widget&>(second));
+    swap(static_cast<Container&>(first), static_cast<Container&>(second));
     swap(first.cols, second.cols);
     swap(first.rows, second.rows);
 }
@@ -42,26 +42,6 @@ void GridContainer::display_attributes(std::ostream& os) const
        << ", rows: " << rows;
 }
 
-void GridContainer::set_allocated_size(cen::iarea size_)
-{
-    Widget::set_allocated_size(size_);
-
-    for (size_t i = 0; i < children.size(); i++) {
-        const auto& grid_pos= positioning_data[i];
-        children[i].first = grid_pos.get_child_pos(*this);
-        children[i].second->set_allocated_size(grid_pos.get_child_size(*this));
-    }
-}
-
-void GridContainer::render_self(cen::renderer &, cen::ipoint ) const
-{
-    // FIXME: widget background color
-/*    cen::color prev_color = renderer.get_color();
-    renderer.set_color(cen::colors::dark_gray);
-    renderer.fill_rect(cen::irect{offset, size});
-    renderer.set_color(prev_color);*/
-}
-
 void GridContainer::add_child(const std::shared_ptr<Widget> &w, int col, int row, int span_cols, int span_rows)
 {
     Position p{col, row, span_cols, span_rows}; // TODO: throw if invalid data
@@ -69,9 +49,24 @@ void GridContainer::add_child(const std::shared_ptr<Widget> &w, int col, int row
         return; // TODO: throw if overlapping
     }
 
-    w->set_allocated_size(p.get_child_size(*this));
     positioning_data.emplace_back(p);
-    children.emplace_back(p.get_child_pos(*this), w->clone());
+    Container::add_child(w);
+}
+
+cen::ipoint GridContainer::get_child_position(size_t index) const
+{
+    Position p = positioning_data[index];
+    int row_size = size.height / rows;
+    int col_size = size.width / cols;
+    return {p.col * col_size, p.row * row_size};
+}
+
+cen::iarea GridContainer::get_child_allocation(size_t index) const
+{
+    Position p = positioning_data[index];
+    int row_size = size.height / rows;
+    int col_size = size.width / cols;
+    return {p.span_cols * col_size, p.span_rows * row_size};
 }
 
 bool GridContainer::check_collisions(Position pos) const
