@@ -1,7 +1,7 @@
 #include "Window.h"
 
 Window::Window(const std::string &t, const cen::iarea &size, const cen::color &color) :
-    Widget{size},
+    Container{size},
     win{t, size},
     renderer{win.make_renderer()}
 {
@@ -14,7 +14,7 @@ Window::~Window()
 }
 
 Window::Window(const Window &w) :
-    Widget{w},
+    Container{w},
     color{w.color},
     win{w.win.title(), size},
     renderer{win.make_renderer()}
@@ -36,7 +36,9 @@ void swap(Window &first, Window &second)
 {
     // enable ADL
     using std::swap;
-    swap(static_cast<Widget&>(first), static_cast<Widget&>(second));
+
+    // swap attributes
+    swap(static_cast<Container&>(first), static_cast<Container&>(second));
     swap(first.win, second.win);
     swap(first.renderer, second.renderer);
 }
@@ -60,7 +62,7 @@ void Window::render_window()
     renderer.clear_with(color);
 
     // parent behaviour (render children)
-    Widget::render(renderer, {0, 0});
+    Container::render(renderer, {0, 0});
 
     // present rendered items
     renderer.present();
@@ -74,4 +76,23 @@ void Window::show()
 void Window::hide()
 {
     win.hide();
+}
+
+void Window::set_child(const std::shared_ptr<Widget> &w)
+{
+    if (!children.empty()) {
+        children.pop_back();
+    }
+
+    Container::add_child(w);
+}
+
+cen::ipoint Window::get_child_position(size_t) const
+{
+    return {0, 0};
+}
+
+cen::iarea Window::get_child_allocation(size_t) const
+{
+    return size;
 }

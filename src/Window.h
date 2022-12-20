@@ -1,15 +1,12 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+#include "Container.h"
 #include <memory>
 #include <string>
-#include <tuple>
-#include <vector>
-#include <iostream>
 #include <centurion.hpp>
-#include "Widget.h"
 
-class Window : public Widget
+class Window : public Container
 {
 public:
     explicit Window(const std::string &t = "Untitled window", const cen::iarea &size = {1000, 500}, const cen::color &color = cen::colors::white);
@@ -28,9 +25,11 @@ public:
     void render_window();
     void show();
     void hide();
+    void set_child(const std::shared_ptr<Widget> &w);
 
 protected:
-    void render_self(cen::renderer &, cen::ipoint) const override {};
+    [[nodiscard]] cen::ipoint get_child_position(size_t index) const override;
+    [[nodiscard]] cen::iarea get_child_allocation(size_t index) const override;
 
 private:
     cen::color color;
