@@ -20,7 +20,7 @@ void Application::run()
             process_event(handler);
         }
 
-        main_window.render();
+        main_window.render_window();
     }
 }
 

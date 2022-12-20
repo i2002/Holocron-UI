@@ -54,11 +54,10 @@ void Window::display_attributes(std::ostream& os) const
        << "color: " << color;
 }
 
-void Window::render()
+void Window::render_window()
 {
     // window background color
     renderer.clear_with(color);
-    children[0].second->set_allocated_size(size); // FIXME: window should have it's own allocation
 
     // parent behaviour (render children)
     Widget::render(renderer, {0, 0});

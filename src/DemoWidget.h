@@ -21,7 +21,7 @@ public:
     void display_attributes(std::ostream& os) const override;
 
 protected:
-    void render_self(cen::renderer &renderer, cen::ipoint offset) const override;
+    void render(cen::renderer &renderer, cen::ipoint offset) const override;
 
 private:
     cen::color color;

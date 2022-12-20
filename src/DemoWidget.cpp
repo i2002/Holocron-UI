@@ -36,7 +36,7 @@ void DemoWidget::display_attributes(std::ostream& os) const
     os << ", color: " << color;
 }
 
-void DemoWidget::render_self(cen::renderer &renderer, cen::ipoint offset) const
+void DemoWidget::render(cen::renderer &renderer, cen::ipoint offset) const
 {
     cen::color prev_color = renderer.get_color();
     renderer.set_color(color);

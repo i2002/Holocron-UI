@@ -25,7 +25,7 @@ public:
     [[nodiscard]] std::string display_name() const override;
     void display_attributes(std::ostream& os) const override;
 
-    void render();
+    void render_window();
     void show();
     void hide();
 
