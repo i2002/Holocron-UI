@@ -4,6 +4,7 @@
 #include <iostream>
 
 // test functions
+/*
 void test_constructor_implementation()
 {
     // static tests
@@ -42,8 +43,9 @@ void test_constructor_implementation()
     // window show delay
     SDL_Delay(5000);
 }
+*/
 
-void test_widget_placement()
+/*void test_widget_placement()
 {
     Window w{"Title"};
     w.add_child(std::make_shared<DemoWidget>(cen::iarea{30, 30}, cen::colors::aqua), cen::ipoint{50, 50});
@@ -55,7 +57,7 @@ void test_widget_placement()
     w.render();
 
     SDL_Delay(5000);
-}
+}*/
 
 void test_containers()
 {
@@ -69,9 +71,9 @@ void test_containers()
     cont2->add_child(ch2, 0, 1, 1, 2);
     cont1->add_child(ch3, 0, 0, 2);
     cont1->add_child(cont2, 1, 1);
-    w.add_child(cont1, cen::ipoint{0, 0});
+    w.set_child(cont1);
     w.show();
-    w.render();
+    w.render_window();
     std::cout << w;
 
     SDL_Delay(5000);
@@ -80,12 +82,12 @@ void test_containers()
 void tests(int test)
 {
     switch (test) {
-        case 1:
+/*        case 1:
             test_constructor_implementation();
             break;
         case 2:
             test_widget_placement();
-            break;
+            break;*/
         case 3:
             test_containers();
             break;
