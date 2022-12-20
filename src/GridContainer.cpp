@@ -3,6 +3,7 @@
 //
 
 #include "GridContainer.h"
+#include "exceptions.h"
 
 GridContainer::GridContainer(int cols, int rows) :
     Container{{0, 0}, SizingPolicy::FIT_PARENT},
@@ -44,9 +45,13 @@ void GridContainer::display_attributes(std::ostream& os) const
 
 void GridContainer::add_child(const std::shared_ptr<Widget> &w, int col, int row, int span_cols, int span_rows)
 {
-    Position p{col, row, span_cols, span_rows}; // TODO: throw if invalid data
+    if (col < 0 || row < 0 || col + span_cols > cols || row + span_rows > rows) {
+        throw invalid_grid_position(std::string("Position is invalid"));
+    }
+
+    Position p{col, row, span_cols, span_rows};
     if (check_collisions(p)) {
-        return; // TODO: throw if overlapping
+        throw grid_widget_overlap(std::string("Position not available"));
     }
 
     positioning_data.emplace_back(p);

@@ -30,15 +30,15 @@ Simple UI toolkit powered by SDL.
 
 #### Cerințe
 - [x] separarea codului din clase în `.h` (sau `.hpp`) și `.cpp`
-- [ ] moșteniri
+- [x] moșteniri
   - [x] funcții virtuale (pure) apelate prin pointeri de bază, constructori virtuali (clone)
   - [x] apelarea constructorului din clasa de bază 
   - [x] smart pointers
   - [x] `dynamic_cast` ??
 - [x] suprascris cc/op= pentru copieri/atribuiri corecte, copy and swap
-- [ ] excepții
-  - [ ] ierarhie proprie cu baza `std::exception` sau derivată din `std::exception`
-  - [ ] utilizare cu sens: de exemplu, `throw` în constructor, `try`/`catch` în `main`
+- [x] excepții
+  - [x] ierarhie proprie cu baza `std::exception` sau derivată din `std::exception`
+  - [x] utilizare cu sens: de exemplu, `throw` în constructor, `try`/`catch` în `main`
 - [ ] funcții și atribute `static`
 - [x] STL
 - [x] cât mai multe `const`

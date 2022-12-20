@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "DemoWidget.h"
 #include "GridContainer.h"
+#include "exceptions.h"
 #include <iostream>
 
 // test functions
@@ -67,10 +68,18 @@ void test_containers()
     auto ch1 = std::make_shared<DemoWidget>(cen::iarea{10, 10}, cen::colors::aqua);
     auto ch2 = std::make_shared<DemoWidget>(cen::iarea{20, 20}, cen::colors::red);
     auto ch3 = std::make_shared<DemoWidget>(cen::iarea{10, 10}, cen::colors::yellow);
-    cont2->add_child(ch1, 0, 0);
-    cont2->add_child(ch2, 0, 1, 1, 2);
-    cont1->add_child(ch3, 0, 0, 2);
-    cont1->add_child(cont2, 1, 1);
+
+    try {
+        cont2->add_child(ch1, 0, 0);
+        cont2->add_child(ch2, 0, 1, 1, 2);
+        cont1->add_child(ch3, 0, 0, 2, 2);
+        cont1->add_child(cont2, 1, 1);
+    } catch (container_error &err) {
+        std::cout << "interface building error: " << err.what() << "\n";
+    } catch (holocronui_error &err) {
+        std::cout << err.what() << "\n";
+    }
+
     w.set_child(cont1);
     w.show();
     w.render_window();
