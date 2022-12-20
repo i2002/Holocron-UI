@@ -22,13 +22,13 @@ public:
     [[nodiscard]] virtual std::shared_ptr<Widget> clone() const = 0;
     friend void swap(Widget &first, Widget &second);
 
-    // virtual void display();
     [[nodiscard]] virtual std::string display_name() const = 0;
     virtual void display_attributes(std::ostream& os) const;
     friend std::ostream& operator<<(std::ostream& os, const Widget &w);
-    cen::iarea get_size() const;
+
+    [[nodiscard]] cen::iarea get_size() const;
     void set_size(cen::iarea size);
-    cen::iarea get_allocated_size() const;
+    [[nodiscard]] cen::iarea get_allocated_size() const;
     virtual void set_allocated_size(cen::iarea size);
 
 protected:
