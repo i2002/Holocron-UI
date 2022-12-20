@@ -15,6 +15,7 @@ public:
     friend void swap(Container &first, Container &second);
 
     void display_attributes(std::ostream& os) const override;
+    void display(std::ostream &os, int nest_level) const override;
     void set_allocated_size(cen::iarea size) override;
 
 protected:

@@ -24,6 +24,7 @@ public:
 
     [[nodiscard]] virtual std::string display_name() const = 0;
     virtual void display_attributes(std::ostream& os) const;
+    virtual void display(std::ostream& os, int nest_level) const;
     friend std::ostream& operator<<(std::ostream& os, const Widget &w);
 
     [[nodiscard]] cen::iarea get_size() const;

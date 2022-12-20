@@ -24,11 +24,16 @@ void Widget::display_attributes(std::ostream& os) const
        << "sizing policy: " << static_cast<int>(sizing_policy);
 }
 
+void Widget::display(std::ostream &os, int) const
+{
+    os << display_name() << " (";
+    display_attributes(os);
+    os << ")\n";
+}
+
 std::ostream& operator<<(std::ostream& os, const Widget &w)
 {
-    os << w.display_name() << " (";
-    w.display_attributes(os); //FIXME: a way to chain these?
-    os << ")\n";
+    w.display(os, 0);
     return os;
 }
 

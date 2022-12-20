@@ -23,8 +23,19 @@ void swap(Container &first, Container &second)
 
 void Container::display_attributes(std::ostream& os) const
 {
-    // FIXME: display children
     Widget::display_attributes(os);
+}
+
+void Container::display(std::ostream &os, int nest_level) const
+{
+    Widget::display(os, nest_level);
+    for (const auto &child : children) {
+        for (int i = 0; i < nest_level; i++) {
+            os << "  ";
+        }
+        os << "- ";
+        child->display(os, nest_level + 1);
+    }
 }
 
 void Container::set_allocated_size(cen::iarea size_)
