@@ -50,10 +50,9 @@ std::string Window::display_name() const
 
 void Window::display_attributes(std::ostream& os) const
 {
-    Widget::display_attributes(os);
-    os << ", "
-       << "title: \"" << win.title() << "\", "
-       << "color: " << color;
+    os << "title: \"" << win.title() << "\", "
+       << "color: " << color << ", ";
+    Container::display_attributes(os);
 }
 
 void Window::render_window()

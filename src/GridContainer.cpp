@@ -37,9 +37,9 @@ std::string GridContainer::display_name() const
 
 void GridContainer::display_attributes(std::ostream& os) const
 {
-    Widget::display_attributes(os);
-    os << ", cols: " << cols
-       << ", rows: " << rows;
+    os << "cols: " << cols << ", "
+       << "rows: " << rows << ", ";
+    Container::display_attributes(os);
 }
 
 void GridContainer::add_child(const std::shared_ptr<Widget> &w, int col, int row, int span_cols, int span_rows)

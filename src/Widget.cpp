@@ -20,8 +20,8 @@ void swap(Widget &first, Widget &second)
 // ----------------- Operator overloading -----------------
 void Widget::display_attributes(std::ostream& os) const
 {
-    os << "size: " << size
-       << ", sizing policy: " << static_cast<int>(sizing_policy);
+    os << "size: " << size << ", "
+       << "sizing policy: " << static_cast<int>(sizing_policy);
 }
 
 std::ostream& operator<<(std::ostream& os, const Widget &w)

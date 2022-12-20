@@ -16,7 +16,6 @@ std::shared_ptr<Widget> DemoWidget::clone() const
     return std::make_shared<DemoWidget>(*this);
 }
 
-// FIXME: is it useful given that assignment operator is protected?
 void swap(DemoWidget &first, DemoWidget &second)
 {
     // enable ADL
@@ -32,8 +31,8 @@ std::string DemoWidget::display_name() const
 
 void DemoWidget::display_attributes(std::ostream& os) const
 {
+    os << "color: " << color << ", ";
     Widget::display_attributes(os);
-    os << ", color: " << color;
 }
 
 void DemoWidget::render(cen::renderer &renderer, cen::ipoint offset) const
