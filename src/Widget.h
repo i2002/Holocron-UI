@@ -45,7 +45,7 @@ protected:
     cen::iarea size;
     cen::iarea allocated_size;
     SizingPolicy sizing_policy;
-    std::weak_ptr<Widget> parent;
+    Widget *parent = nullptr;
 };
 
 #endif // WIDGET_H

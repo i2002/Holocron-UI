@@ -50,6 +50,7 @@ void Container::render(cen::renderer &renderer, cen::ipoint offset) const
 
 void Container::add_child(const std::shared_ptr<Widget> &w)
 {
+    w->parent = this;
     w->set_allocated_size(get_child_allocation(children.size() + 1));
     children.emplace_back(w->clone());
 }
