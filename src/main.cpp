@@ -88,6 +88,13 @@ void test_containers()
     SDL_Delay(5000);
 }
 
+void test_application()
+{
+    Application a;
+    std::cout << a;
+    a.run();
+}
+
 void tests(int test)
 {
     switch (test) {
@@ -99,6 +106,9 @@ void tests(int test)
             break;*/
         case 3:
             test_containers();
+            break;
+        case 4:
+            test_application();
             break;
         default:
             std::cout << "Invalid test\n";
@@ -116,6 +126,6 @@ int main(int, char**)
     // std::cout << a;
     // a.run();
 
-    tests(3);
+    tests(4);
     return 0;
 }

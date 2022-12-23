@@ -1,4 +1,5 @@
 #include "Widget.h"
+#include <iostream>
 
 // ------------- Constructors and destructors -------------
 Widget::Widget(cen::iarea size, SizingPolicy policy) :
@@ -61,4 +62,30 @@ void Widget::set_allocated_size(cen::iarea size_)
     if (sizing_policy == SizingPolicy::FIT_PARENT) {
         size = allocated_size;
     }
+}
+
+// Event handling
+bool Widget::process_event(const cen::event_handler &event, cen::ipoint position)
+{
+    // TODO: capture handlers (+ check for cancellation)
+    if (event.is(cen::event_type::mouse_button_down)) {
+        const auto& btn_down = event.get<cen::mouse_button_event>();
+        // FIXME: remove debug messages
+        std::cout << "(capture): mouse click at coordinates x: " << btn_down.x() << " and y: " << btn_down.y() <<  " and relative position: " << position << " on window: " << btn_down.window_id() << ", on widget:" << display_name() << "\n";
+    }
+
+    bool bubbling_cancelled = propagate_event(event, position);
+
+    if (bubbling_cancelled) {
+        return true;
+    }
+
+    // TODO: bubbling handlers (+ check for cancellation)
+    if (event.is(cen::event_type::mouse_button_down)) {
+        const auto& btn_down = event.get<cen::mouse_button_event>();
+        // FIXME: remove debug messages
+        std::cout << "(bubbling): mouse click at coordinates x: " << btn_down.x() << " and y: " << btn_down.y() <<  " and relative position: " << position << " on window: " << btn_down.window_id() << ", on widget:" << display_name() << "\n";
+    }
+
+    return false;
 }

@@ -59,6 +59,22 @@ void Container::render(cen::renderer &renderer, cen::ipoint offset) const
     }
 }
 
+bool Container::propagate_event(const cen::event_handler &event, cen::ipoint position)
+{
+    bool bubbling_cancelled = false;
+    if (event.is(cen::event_type::mouse_button_down)) {
+        for (size_t i = 0; i < children.size(); i++) {
+            auto child_pos = get_child_position(i);
+            cen::irect child_rect{child_pos, children[i]->get_allocated_size()};
+            if (child_rect.contains(position)) {
+                bubbling_cancelled = bubbling_cancelled || children[i]->process_event(event, position - child_pos);
+            }
+        }
+    }
+
+    return bubbling_cancelled;
+}
+
 void Container::add_child(const std::shared_ptr<Widget> &w)
 {
     w->parent = this;

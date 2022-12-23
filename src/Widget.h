@@ -41,12 +41,21 @@ protected:
     virtual void render(cen::renderer &renderer, cen::ipoint offset) const = 0;
     // TODO: implement resizing request (when internal widget structure changed)
 
+    // TODO: support for widget specific events (like window resize, etc)
+    // TODO: maybe use template function to prevent if/else if in every recursion call
+    // TODO: and also remove position and in turn change the event to use relative position
+    bool process_event(const cen::event_handler &event, cen::ipoint position = {0, 0});
+    virtual bool propagate_event(const cen::event_handler &, cen::ipoint) { return false; };
+    // void add_event_handler();
+
+
     // TODO: sizing based on widget size requirement? (-> scrolling)
     // TODO: margins in relation to parent (px or %)
     cen::iarea size;
     cen::iarea allocated_size;
     SizingPolicy sizing_policy;
     Widget *parent = nullptr;
+    event_dispatcher dispatch;
 };
 
 #endif // WIDGET_H

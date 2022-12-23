@@ -8,6 +8,8 @@
 
 class Window : public Container
 {
+    friend class Application;
+
 public:
     explicit Window(const std::string &t = "Untitled window", const cen::iarea &size = {1000, 500}, const cen::color &color = cen::colors::white);
     ~Window() override;
