@@ -5,9 +5,9 @@
 #include "GridContainer.h"
 #include "exceptions.h"
 
-GridContainer::GridContainer(int cols, int rows, const cen::color &background_color) :
+GridContainer::GridContainer(int cols_, int rows_, const cen::color &background_color) :
     Container{{0, 0}, background_color, SizingPolicy::FIT_PARENT},
-    cols{cols}, rows{rows}
+    cols{cols_}, rows{rows_}
 {}
 
 GridContainer& GridContainer::operator=(GridContainer other)

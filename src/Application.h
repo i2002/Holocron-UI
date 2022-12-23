@@ -8,7 +8,7 @@ class Application
 {
     Window main_window;
     cen::event_handler handler;
-    bool running;
+    bool running = false;
 
     void process_event(cen::event_handler &e);
 public:
