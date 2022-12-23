@@ -40,7 +40,7 @@ std::ostream& operator<<(std::ostream& os, const Widget &w)
 
 
 // ------------------ Getters and setters -----------------
-cen::iarea Widget::get_size() const
+/*cen::iarea Widget::get_size() const
 {
     return size;
 }
@@ -48,7 +48,7 @@ cen::iarea Widget::get_size() const
 void Widget::set_size(cen::iarea size_)
 {
     size = size_;
-}
+}*/
 
 cen::iarea Widget::get_allocated_size() const
 {

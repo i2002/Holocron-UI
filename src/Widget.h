@@ -27,8 +27,8 @@ public:
     virtual void display(std::ostream& os, int nest_level) const;
     friend std::ostream& operator<<(std::ostream& os, const Widget &w);
 
-    [[nodiscard]] cen::iarea get_size() const;
-    void set_size(cen::iarea size);
+/*    [[nodiscard]] cen::iarea get_size() const;
+    void set_size(cen::iarea size);*/
     [[nodiscard]] cen::iarea get_allocated_size() const;
     virtual void set_allocated_size(cen::iarea size);
 
@@ -55,7 +55,6 @@ protected:
     cen::iarea allocated_size;
     SizingPolicy sizing_policy;
     Widget *parent = nullptr;
-    event_dispatcher dispatch;
 };
 
 #endif // WIDGET_H
