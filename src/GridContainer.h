@@ -13,7 +13,7 @@ protected:
     };
 
 public:
-    GridContainer(int cols, int rows);
+    GridContainer(int cols, int rows, const cen::color &background_color = cen::colors::white);
     GridContainer(const GridContainer &other) = default;
     GridContainer(GridContainer &&other) = default;
 

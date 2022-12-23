@@ -8,7 +8,7 @@
 class Container : public Widget
 {
 public:
-    explicit Container(cen::iarea size = {0, 0}, SizingPolicy policy = SizingPolicy::FIT_PARENT);
+    explicit Container(cen::iarea size = {0, 0}, cen::color background_color = cen::colors::white, SizingPolicy policy = SizingPolicy::FIT_PARENT);
     Container(Container &&other) = default;
 
     Container &operator=(Container &&other) = default;
@@ -21,13 +21,13 @@ public:
 protected:
     Container(const Container &other);
     void render(cen::renderer &renderer, cen::ipoint offset) const final;
-    virtual void render_self(cen::renderer &, cen::ipoint) const {};
 
     void add_child(const std::shared_ptr<Widget> &w);
     [[nodiscard]] virtual cen::ipoint get_child_position(size_t index) const = 0;
     [[nodiscard]] virtual cen::iarea get_child_allocation(size_t index) const = 0;
 
     std::vector<std::shared_ptr<Widget>> children;
+    cen::color background_color;
 };
 
 #endif //CONTAINER_H

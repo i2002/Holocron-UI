@@ -1,11 +1,12 @@
 #include "Container.h"
+#include "Utilities.h"
 
-Container::Container(cen::iarea size, SizingPolicy policy) :
-    Widget{size, policy}
+Container::Container(cen::iarea size, cen::color background_color, SizingPolicy policy) :
+    Widget{size, policy}, background_color{background_color}
 {}
 
 Container::Container(const Container &other)
-    : Widget(other)
+    : Widget(other), background_color{other.background_color}
 {
     for (const auto &child : other.children) {
         children.emplace_back(child->clone());
@@ -19,10 +20,12 @@ void swap(Container &first, Container &second)
 
     // swap attributes
     swap(first.children, second.children);
+    swap(first.background_color, second.background_color);
 }
 
 void Container::display_attributes(std::ostream& os) const
 {
+    os << "background-color: " << background_color << ", ";
     Widget::display_attributes(os);
 }
 
@@ -49,10 +52,7 @@ void Container::set_allocated_size(cen::iarea size_)
 
 void Container::render(cen::renderer &renderer, cen::ipoint offset) const
 {
-    // FIXME: render background
-
-    // FIXME: do I need to render container specific info?
-    render_self(renderer, offset);
+    Utilities::render_background(renderer, offset, size, background_color);
 
     for (size_t i = 0; i < children.size(); i++) {
         children[i]->render(renderer, offset + get_child_position(i));

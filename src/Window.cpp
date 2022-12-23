@@ -1,12 +1,10 @@
 #include "Window.h"
 
 Window::Window(const std::string &t, const cen::iarea &size, const cen::color &color) :
-    Container{size},
+    Container{size, color},
     win{t, size},
     renderer{win.make_renderer()}
-{
-    this->color = color;
-}
+{}
 
 Window::~Window()
 {
@@ -15,7 +13,6 @@ Window::~Window()
 
 Window::Window(const Window &w) :
     Container{w},
-    color{w.color},
     win{w.win.title(), size},
     renderer{win.make_renderer()}
 {
@@ -50,15 +47,14 @@ std::string Window::display_name() const
 
 void Window::display_attributes(std::ostream& os) const
 {
-    os << "title: \"" << win.title() << "\", "
-       << "color: " << color << ", ";
+    os << "title: \"" << win.title() << "\", ";
     Container::display_attributes(os);
 }
 
 void Window::render_window()
 {
     // window background color
-    renderer.clear_with(color);
+    renderer.clear_with(background_color);
 
     // parent behaviour (render children)
     Container::render(renderer, {0, 0});

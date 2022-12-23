@@ -5,8 +5,8 @@
 #include "GridContainer.h"
 #include "exceptions.h"
 
-GridContainer::GridContainer(int cols, int rows) :
-    Container{{0, 0}, SizingPolicy::FIT_PARENT},
+GridContainer::GridContainer(int cols, int rows, const cen::color &background_color) :
+    Container{{0, 0}, background_color, SizingPolicy::FIT_PARENT},
     cols{cols}, rows{rows}
 {}
 

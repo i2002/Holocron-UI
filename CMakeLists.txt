@@ -82,7 +82,7 @@ find_package(SDL2_ttf REQUIRED CONFIG)
 ###############################################################################
 
 # NOTE: update executable name in .github/workflows/cmake.yml when changing name here
-add_executable(${PROJECT_NAME} src/main.cpp src/Application.cpp src/Window.cpp src/Widget.cpp src/DemoWidget.cpp src/GridContainer.cpp src/GridContainer.h src/Container.cpp src/Container.h src/exceptions.h)
+add_executable(${PROJECT_NAME} src/main.cpp src/Application.cpp src/Window.cpp src/Widget.cpp src/DemoWidget.cpp src/GridContainer.cpp src/GridContainer.h src/Container.cpp src/Container.h src/exceptions.h src/Utilities.cpp src/Utilities.h)
 
 ###############################################################################
 

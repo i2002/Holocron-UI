@@ -1,4 +1,5 @@
 #include "DemoWidget.h"
+#include "Utilities.h"
 
 DemoWidget::DemoWidget(const cen::iarea &size, const cen::color &color) :
     Widget{size, SizingPolicy::FIT_PARENT},
@@ -37,8 +38,5 @@ void DemoWidget::display_attributes(std::ostream& os) const
 
 void DemoWidget::render(cen::renderer &renderer, cen::ipoint offset) const
 {
-    cen::color prev_color = renderer.get_color();
-    renderer.set_color(color);
-    renderer.fill_rect(cen::irect{offset, size});
-    renderer.set_color(prev_color);
+    Utilities::render_background(renderer, offset, size, color);
 }

@@ -32,7 +32,6 @@ protected:
     [[nodiscard]] cen::iarea get_child_allocation(size_t index) const override;
 
 private:
-    cen::color color;
     cen::window win;
     cen::renderer renderer;
 };
