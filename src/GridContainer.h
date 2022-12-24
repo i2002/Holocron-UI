@@ -7,6 +7,9 @@
 
 class GridContainer : public Container
 {
+    static const int MAX_COLS = 60;
+    static const int MAX_ROWS = 30;
+
 protected:
     struct Position {
         int col, row, span_cols, span_rows;

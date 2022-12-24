@@ -8,7 +8,15 @@
 GridContainer::GridContainer(int cols_, int rows_, const cen::color &background_color) :
     Container{{0, 0}, background_color, SizingPolicy::FIT_PARENT},
     cols{cols_}, rows{rows_}
-{}
+{
+    if (cols_ > MAX_COLS || cols_ <= 0) {
+        throw invalid_properties("(GridContainer) invalid column number");
+    }
+
+    if (rows_ > MAX_ROWS || rows <= 0) {
+        throw invalid_properties("(GridContainer) invalid row number");
+    }
+}
 
 GridContainer& GridContainer::operator=(GridContainer other)
 {

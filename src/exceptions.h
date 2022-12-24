@@ -8,6 +8,11 @@ class holocronui_error : public std::runtime_error
     using std::runtime_error::runtime_error;
 };
 
+class invalid_properties : public holocronui_error
+{
+    using holocronui_error::holocronui_error;
+};
+
 class container_error : public holocronui_error
 {
     using holocronui_error::holocronui_error;
