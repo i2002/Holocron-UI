@@ -122,10 +122,19 @@ int main(int, char**)
     const cen::sdl sdl;
     const cen::img img;
 
-    // Application a;
-    // std::cout << a;
-    // a.run();
+    // Tests
+    tests(3);
 
-    tests(4);
+    // Launch application
+    try {
+        Application a;
+        std::cout << a;
+        a.run();
+    } catch (container_error &err) {
+        std::cout << "interface building error: " << err.what() << "\n";
+    } catch (holocronui_error &err) {
+        std::cout << err.what() << "\n";
+    }
+
     return 0;
 }
