@@ -40,6 +40,13 @@ void Application::process_event(cen::event_handler &e)
         running = false;
     }
 
+    if(e.is(cen::event_type::window)) {
+        const auto& window_event = e.get<cen::window_event>();
+        if (window_event.event_id() == cen::window_event_id::resized) {
+            main_window.set_allocated_size({window_event.data1(), window_event.data2()});
+        }
+    }
+
     // TODO: event processing?
     if (e.is(cen::event_type::mouse_button_down)) {
         std::cout << "-------------\n";
