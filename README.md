@@ -60,4 +60,5 @@ Simple UI toolkit powered by SDL.
 - https://github.com/libsdl-org/SDL_image (Zlib)
 - https://github.com/libsdl-org/SDL_mixer (Zlib)
 - https://github.com/libsdl-org/SDL_ttf (Zlib)
+- https://www.fontsquirrel.com/fonts/open-sans (Apache)
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
