@@ -42,8 +42,8 @@ Simple UI toolkit powered by SDL.
 - [x] funcții și atribute `static`
 - [x] STL
 - [x] cât mai multe `const`
-- [ ] la sfârșit: commit separat cu adăugarea unei noi derivate
-- [ ] tag de `git`: de exemplu `v0.2`
+- [x] la sfârșit: commit separat cu adăugarea unei noi derivate
+- [x] tag de `git`: de exemplu `v0.2`
 
 ### Tema 3
 
