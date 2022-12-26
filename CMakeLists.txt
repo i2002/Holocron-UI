@@ -8,6 +8,11 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Avoid warning about DOWNLOAD_EXTRACT_TIMESTAMP in CMake 3.24:
+if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
+    cmake_policy(SET CMP0135 NEW)
+endif()
+
 
 # By default, treat warnings as errors; override via cmake defines or via env vars
 if(DEFINED WARNINGS_AS_ERRORS)
@@ -166,6 +171,9 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${SDL2_LIBRARIES} SDL2_image::SDL2
 
 # post build steps
 
+# copy resources
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PROJECT_SOURCE_DIR}/resources/open_sans/OpenSans-Regular.ttf $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+
 # on windows: copy SDL dlls into binary dir
 if (WIN32)
     get_target_property(SDL_BIN SDL2::SDL2 IMPORTED_LOCATION)
@@ -184,6 +192,8 @@ endif ()
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 # install(DIRECTORY some_dir1 some_dir2 DESTINATION bin)
 # install(FILES some_file1.txt some_file2.md DESTINATION bin)
+
+install(FILES "${PROJECT_SOURCE_DIR}/resources/open_sans/OpenSans-Regular.ttf" DESTINATION bin)
 
 if (WIN32)
     install(FILES ${SDL_BIN} DESTINATION bin)
