@@ -2,7 +2,7 @@
 
 Window::Window(const std::string &t, const cen::iarea &size, const cen::color &color) :
     Container{size, color},
-    win{t, size},
+    win{t, size, cen::window::window_flags::resizable},
     renderer{win.make_renderer()}
 {}
 

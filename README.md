@@ -34,16 +34,16 @@ Simple UI toolkit powered by SDL.
   - [x] funcții virtuale (pure) apelate prin pointeri de bază, constructori virtuali (clone)
   - [x] apelarea constructorului din clasa de bază 
   - [x] smart pointers
-  - [x] `dynamic_cast` ??
+  - [x] `dynamic_cast`
 - [x] suprascris cc/op= pentru copieri/atribuiri corecte, copy and swap
 - [x] excepții
   - [x] ierarhie proprie cu baza `std::exception` sau derivată din `std::exception`
   - [x] utilizare cu sens: de exemplu, `throw` în constructor, `try`/`catch` în `main`
-- [ ] funcții și atribute `static`
+- [x] funcții și atribute `static`
 - [x] STL
 - [x] cât mai multe `const`
-- [ ] la sfârșit: commit separat cu adăugarea unei noi derivate
-- [ ] tag de `git`: de exemplu `v0.2`
+- [x] la sfârșit: commit separat cu adăugarea unei noi derivate
+- [x] tag de `git`: de exemplu `v0.2`
 
 ### Tema 3
 
@@ -60,4 +60,5 @@ Simple UI toolkit powered by SDL.
 - https://github.com/libsdl-org/SDL_image (Zlib)
 - https://github.com/libsdl-org/SDL_mixer (Zlib)
 - https://github.com/libsdl-org/SDL_ttf (Zlib)
+- https://www.fontsquirrel.com/fonts/open-sans (Apache)
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit

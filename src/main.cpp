@@ -84,7 +84,14 @@ void test_containers()
     w.show();
     w.render_window();
     std::cout << w;
+    SDL_Delay(5000);
 
+    auto w2 = w.clone();
+    if(auto wind = dynamic_cast<Window*>(w2.get())) {
+        wind->show();
+        wind->render_window();
+    }
+    std::cout << *w2;
     SDL_Delay(5000);
 }
 
@@ -121,6 +128,7 @@ int main(int, char**)
     // initialize SDL library
     const cen::sdl sdl;
     const cen::img img;
+    const cen::ttf ttf;
 
     // Tests
     tests(3);
