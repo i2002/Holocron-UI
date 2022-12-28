@@ -10,6 +10,7 @@ class Widget
     friend class Container;
 
 protected:
+    using children_vector = std::vector<std::tuple<std::shared_ptr<Widget>, cen::ipoint, cen::iarea>>;
     enum class SizingPolicy {FIXED_SIZE, FIT_PARENT};
 
 public:
@@ -44,10 +45,17 @@ protected:
     // TODO: support for widget specific events (like window resize, etc)
     // TODO: maybe use template function to prevent if/else if in every recursion call
     // TODO: and also remove position and in turn change the event to use relative position
-    bool process_event(const cen::event_handler &event, cen::ipoint position = {0, 0});
-    virtual bool propagate_event(const cen::event_handler &, cen::ipoint) { return false; };
-    // void add_event_handler();
+    [[nodiscard]] virtual children_vector get_children() const;
 
+
+    template<typename Event>
+    bool process_event(Event);
+
+    template <typename Event>
+    void default_event_handler(Event /* event */) {};
+
+    template <typename Event>
+    bool propagate_event(Event &event, const std::shared_ptr<Widget> &w, cen::ipoint pos, cen::iarea alloc);
 
     // TODO: sizing based on widget size requirement? (-> scrolling)
     // TODO: margins in relation to parent (px or %)

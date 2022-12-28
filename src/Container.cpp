@@ -8,8 +8,10 @@ Container::Container(cen::iarea size, cen::color background_color, SizingPolicy 
 Container::Container(const Container &other)
     : Widget(other), background_color{other.background_color}
 {
-    for (const auto &child : other.children) {
-        children.emplace_back(child->clone());
+    for (const auto &[child, pos, alloc] : other.children) {
+        auto child_clone = child->clone();
+        child_clone->parent = this;
+        children.emplace_back(child_clone, pos, alloc);
     }
 }
 
@@ -32,7 +34,7 @@ void Container::display_attributes(std::ostream& os) const
 void Container::display(std::ostream &os, int nest_level) const
 {
     Widget::display(os, nest_level);
-    for (const auto &child : children) {
+    for (const auto &[child, pos, alloc] : children) {
         for (int i = 0; i < nest_level; i++) {
             os << "  ";
         }
@@ -46,7 +48,10 @@ void Container::set_allocated_size(cen::iarea size_)
     Widget::set_allocated_size(size_);
 
     for (size_t i = 0; i < children.size(); i++) {
-        children[i]->set_allocated_size(get_child_allocation(i));
+        auto& [child, pos, alloc] = children[i];
+        pos = get_child_position(i);
+        alloc = get_child_allocation(i);
+        child->set_allocated_size(alloc);
     }
 }
 
@@ -54,30 +59,23 @@ void Container::render(cen::renderer &renderer, cen::ipoint offset) const
 {
     Utilities::render_background(renderer, offset, size, background_color);
 
-    for (size_t i = 0; i < children.size(); i++) {
-        children[i]->render(renderer, offset + get_child_position(i));
+    for (const auto& [child, pos, alloc] : children) {
+        child->render(renderer, offset + pos);
     }
 }
 
-bool Container::propagate_event(const cen::event_handler &event, cen::ipoint position)
+Widget::children_vector Container::get_children() const
 {
-    bool bubbling_cancelled = false;
-    if (event.is(cen::event_type::mouse_button_down)) {
-        for (size_t i = 0; i < children.size(); i++) {
-            auto child_pos = get_child_position(i);
-            cen::irect child_rect{child_pos, children[i]->get_allocated_size()};
-            if (child_rect.contains(position)) {
-                bubbling_cancelled = bubbling_cancelled || children[i]->process_event(event, position - child_pos);
-            }
-        }
-    }
-
-    return bubbling_cancelled;
+    return children;
 }
 
 void Container::add_child(const std::shared_ptr<Widget> &w)
 {
+    auto pos = get_child_position(children.size());
+    auto alloc = get_child_allocation(children.size());
+    auto child_clone = w->clone();
+
     w->parent = this;
-    w->set_allocated_size(get_child_allocation(children.size() + 1));
-    children.emplace_back(w->clone());
+    w->set_allocated_size(alloc);
+    children.emplace_back(child_clone, pos, alloc);
 }

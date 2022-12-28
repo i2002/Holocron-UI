@@ -18,16 +18,17 @@ public:
     void display(std::ostream &os, int nest_level) const override;
     void set_allocated_size(cen::iarea size) override;
 
+    [[nodiscard]] children_vector get_children() const override;
+
 protected:
     Container(const Container &other);
     void render(cen::renderer &renderer, cen::ipoint offset) const final;
-    bool propagate_event(const cen::event_handler &event, cen::ipoint position) override;
 
     void add_child(const std::shared_ptr<Widget> &w);
     [[nodiscard]] virtual cen::ipoint get_child_position(size_t index) const = 0;
     [[nodiscard]] virtual cen::iarea get_child_allocation(size_t index) const = 0;
 
-    std::vector<std::shared_ptr<Widget>> children;
+    children_vector children;
     cen::color background_color;
 };
 
