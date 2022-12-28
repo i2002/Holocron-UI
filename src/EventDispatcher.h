@@ -13,13 +13,16 @@ class EventDispatcher
     static_assert((!std::is_reference_v<Events> && ...));
     static_assert((!std::is_pointer_v<Events> && ...));
 
+public:
     template <typename Event>
-    using event_wrapper = std::vector<std::function<bool (Event)>>;
+    using handler_type = std::function<bool (Event)>;
 
     template <typename Event, typename Data>
-    using handler_type = std::function<bool (Event, Data)>;
+    using handler_type_data = std::function<bool (Event, Data)>;
 
-public:
+    template <typename Event>
+    using event_wrapper = std::vector<handler_type<Event>>;
+
     /**
      * Disable template deduction for function params:
      * Source: https://stackoverflow.com/questions/37737487/better-way-to-disable-argument-based-template-parameter-deduction-for-functions
@@ -34,15 +37,20 @@ public:
         remove_all_handlers();
     }
 
+    template <typename Event>
+    void add_handler(handler_type<Event> handler)
+    {
+        get_handlers<Event>().push_back(handler);
+    }
+
     template <typename Event, typename Data>
-    void add_handler(handler_type<Event, std::common_type_t<Data>> handler, Data data)
+    void add_handler(handler_type_data<Event, std::common_type_t<Data>> handler, Data data)
     {
         using namespace std::placeholders;
         auto data_handler = std::bind(handler, _1, data);
         get_handlers<Event>().push_back(data_handler);
     }
 
-protected:
     template <typename Event>
     bool run_handlers(Event ev)
     {

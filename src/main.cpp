@@ -2,6 +2,7 @@
 #include "DemoWidget.h"
 #include "GridContainer.h"
 #include "exceptions.h"
+#include "EventDispatcher.h"
 #include <iostream>
 
 // test functions
@@ -102,6 +103,38 @@ void test_application()
     a.run();
 }
 
+bool func(int ev, char data)
+{
+    std::cout << "Function handler\n";
+    std::cout << ev << " " << data << "\n";
+    return false;
+}
+
+void test_event_dispatcher()
+{
+    EventDispatcher<int, double> ev{};
+
+    ev.add_handler<int>([](int ev, double extra) {
+        std::cout << "Lambda handler\n";
+        std::cout << ev << " " << extra << "\n";
+        return true;
+    }, 10.2);
+    ev.add_handler<int>(func, '3');
+    ev.add_handler<double>([](double ev) {
+        std::cout << "Without data: " << ev << "\n";
+        return false;
+    });
+
+    std::cout << "Running int event 2\n";
+    std::cout << ev.run_handlers(2) << "\n";
+
+    ev.remove_handlers<int>();
+
+    std::cout << "Running int event 3\n";
+    ev.run_handlers(3);
+}
+
+
 void tests(int test)
 {
     switch (test) {
@@ -117,6 +150,9 @@ void tests(int test)
         case 4:
             test_application();
             break;
+        case 5:
+            test_event_dispatcher();
+            break;
         default:
             std::cout << "Invalid test\n";
             break;
@@ -131,7 +167,7 @@ int main(int, char**)
     const cen::ttf ttf;
 
     // Tests
-    tests(3);
+    tests(5);
 
     // Launch application
     try {
