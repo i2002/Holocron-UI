@@ -73,9 +73,9 @@ void Container::add_child(const std::shared_ptr<Widget> &w)
 {
     auto pos = get_child_position(children.size());
     auto alloc = get_child_allocation(children.size());
-    auto child_clone = w->clone();
 
-    w->parent = this;
-    w->set_allocated_size(alloc);
+    auto child_clone = w->clone();
+    child_clone->parent = this;
+    child_clone->set_allocated_size(alloc);
     children.emplace_back(child_clone, pos, alloc);
 }
