@@ -1,10 +1,16 @@
+#include <iostream>
 #include "Window.h"
 
 Window::Window(const std::string &t, const cen::iarea &size, const cen::color &color) :
     Container{size, color},
     win{t, size, cen::window::window_flags::resizable},
     renderer{win.make_renderer()}
-{}
+{
+    add_event_handler<cen::mouse_button_event>([this](cen::mouse_button_event) {
+        dispatcher.run_handlers(std::string("message"));
+        return false;
+    });
+}
 
 Window::~Window()
 {

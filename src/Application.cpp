@@ -32,6 +32,10 @@ Application::Application() :
     cont1->add_child(cont3, 0, 1);
 
     main_window.set_child(cont1);
+    main_window.add_event_handler<std::string, Window>([](const std::string &event) {
+        std::cout << "Window clicked: " << event << "\n";
+        return false;
+    });
 }
 
 void Application::run()

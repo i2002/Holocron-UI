@@ -9,6 +9,7 @@
 class Window : public Container
 {
     friend class Application;
+    friend class Widget;
 
 public:
     explicit Window(const std::string &t = "Untitled window", const cen::iarea &size = {1000, 500}, const cen::color &color = cen::colors::white);
@@ -32,6 +33,8 @@ public:
 protected:
     [[nodiscard]] cen::ipoint get_child_position(size_t index) const override;
     [[nodiscard]] cen::iarea get_child_allocation(size_t index) const override;
+
+    EventDispatcher<std::string> dispatcher;
 
 private:
     cen::window win;
