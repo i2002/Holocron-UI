@@ -4,6 +4,11 @@
 #include <centurion.hpp>
 #include <memory>
 #include <string>
+#include "EventDispatcher.h"
+
+template<typename ...Events>
+using WidgetEventDispatcher = EventDispatcher<cen::mouse_button_event, cen::mouse_motion_event, Events...>;
+
 
 class Widget
 {
@@ -14,7 +19,6 @@ protected:
     enum class SizingPolicy {FIXED_SIZE, FIT_PARENT};
 
 public:
-    // FIXME: parent ref management
     explicit Widget(cen::iarea size = {0, 0}, SizingPolicy policy = SizingPolicy::FIXED_SIZE);
     virtual ~Widget() = default;
     Widget(Widget &&other) = default;
@@ -33,26 +37,29 @@ public:
     [[nodiscard]] cen::iarea get_allocated_size() const;
     virtual void set_allocated_size(cen::iarea size);
 
+    template <typename Event, class Base = Widget>
+    void add_event_handler(EventDispatcher<>::handler_type<Event> hand) {
+        dynamic_cast<Base *>(this)->dispatcher.template add_handler<>(hand);
+    }
+
+    template <typename Event, class Base = Widget, typename Data>
+    void add_event_handler(EventDispatcher<>::handler_type_data<Event, std::type_identity_t<Data>> hand, Data data) {
+        dynamic_cast<Base *>(this)->dispatcher.template add_handler<>(hand, data);
+    }
+
 protected:
     // prevent object slicing when copying
-    Widget(const Widget &other) = default;
-    // QUESTION: is it ok to not have an assigment operator for abstract class? OR clone() and swap on the clone
+    Widget(const Widget &other);
 
     // TODO: surface rendering: every widget has it's own surface that is merged by the parent + surface caching
     virtual void render(cen::renderer &renderer, cen::ipoint offset) const = 0;
     // TODO: implement resizing request (when internal widget structure changed)
 
-    // TODO: support for widget specific events (like window resize, etc)
-    // TODO: maybe use template function to prevent if/else if in every recursion call
-    // TODO: and also remove position and in turn change the event to use relative position
     [[nodiscard]] virtual children_vector get_children() const;
-
+    void register_handlers();
 
     template<typename Event>
     bool process_event(Event);
-
-    template <typename Event>
-    void default_event_handler(Event /* event */) {};
 
     template <typename Event>
     bool propagate_event(Event &event, const std::shared_ptr<Widget> &w, cen::ipoint pos, cen::iarea alloc);
@@ -63,6 +70,31 @@ protected:
     cen::iarea allocated_size;
     SizingPolicy sizing_policy;
     Widget *parent = nullptr;
+    WidgetEventDispatcher<> dispatcher;
 };
+
+// Template generic implementation
+template<typename Event>
+bool Widget::process_event(Event event)
+{
+    bool cancelled = dispatcher.run_handlers(event);
+    if (cancelled) {
+        return true;
+    }
+
+    for (const auto &[w, pos, alloc] : get_children()) {
+        if (propagate_event(event, w, pos, alloc)) {
+            cancelled = w->process_event(event) || cancelled;
+        }
+    }
+
+    return cancelled;
+}
+
+template<typename Event>
+bool Widget::propagate_event(Event &, const std::shared_ptr<Widget> &, cen::ipoint, cen::iarea)
+{
+    return true;
+}
 
 #endif // WIDGET_H

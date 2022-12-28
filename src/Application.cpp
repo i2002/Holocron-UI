@@ -24,6 +24,9 @@ Application::Application() :
     cont3->add_child(ch_text, 0, 0);
     cont3->add_child(ch_text2, 0, 1);
     cont3->add_child(ch_text3, 0, 2);
+    cont3->add_event_handler<cen::mouse_button_event>([] (cen::mouse_button_event) {
+        return true;
+    });
     cont1->add_child(ch3, 0, 0, 2);
     cont1->add_child(cont2, 1, 1);
     cont1->add_child(cont3, 0, 1);
@@ -46,10 +49,12 @@ void Application::run()
 
 void Application::process_event(cen::event_handler &e)
 {
+    // application events
     if (e.is<cen::quit_event>()) {
         running = false;
     }
 
+    // window events
     if(e.is(cen::event_type::window)) {
         const auto& window_event = e.get<cen::window_event>();
         if (window_event.event_id() == cen::window_event_id::resized) {
@@ -57,11 +62,10 @@ void Application::process_event(cen::event_handler &e)
         }
     }
 
-    // TODO: event processing?
     if (e.is(cen::event_type::mouse_button_down)) {
-        std::cout << "-------------\n";
-        const auto& btn_down = e.get<cen::mouse_button_event>();
-        main_window.process_event(e, {btn_down.x(), btn_down.y()});
+        main_window.process_event(e.get<cen::mouse_button_event>());
+    } else if (e.is(cen::event_type::mouse_motion)) {
+        main_window.process_event(e.get<cen::mouse_motion_event>());
     }
 }
 

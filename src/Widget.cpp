@@ -4,7 +4,15 @@
 // ------------- Constructors and destructors -------------
 Widget::Widget(cen::iarea size, SizingPolicy policy) :
     size{size}, sizing_policy{policy}
-{}
+{
+    register_handlers();
+}
+
+Widget::Widget(const Widget &other) :
+    size{other.size}, allocated_size{other.allocated_size}, sizing_policy{other.sizing_policy}, parent{other.parent}
+{
+    register_handlers();
+}
 
 void swap(Widget &first, Widget &second)
 {
@@ -64,28 +72,54 @@ void Widget::set_allocated_size(cen::iarea size_)
     }
 }
 
-// Event handling
-bool Widget::process_event(const cen::event_handler &event, cen::ipoint position)
+Widget::children_vector Widget::get_children() const
 {
-    // TODO: capture handlers (+ check for cancellation)
-    if (event.is(cen::event_type::mouse_button_down)) {
-        const auto& btn_down = event.get<cen::mouse_button_event>();
-        // FIXME: remove debug messages
-        std::cout << "(capture): mouse click at coordinates x: " << btn_down.x() << " and y: " << btn_down.y() <<  " and relative position: " << position << " on window: " << btn_down.window_id() << ", on widget:" << display_name() << "\n";
-    }
+    return {};
+}
 
-    bool bubbling_cancelled = propagate_event(event, position);
+// ------------------ Event handling -----------------
+void Widget::register_handlers()
+{
+    dispatcher.add_handler<cen::mouse_button_event>([this](cen::mouse_button_event event) {
+        std::cout << "mouse click at position: " << event.position() << " on window " << event.window_id() <<
+                  " and widget: " << display_name() << " (";
+        display_attributes(std::cout);
+        std::cout << ")\n";
+        return false;
+    });
 
-    if (bubbling_cancelled) {
+    dispatcher.add_handler<cen::mouse_motion_event>([this](cen::mouse_motion_event event) {
+        if (!event.pressed(cen::mouse_button::left)) {
+            return true;
+        }
+
+        std::cout << "mouse motion at position: " << cen::ipoint{event.x(), event.y()} << ", "
+            "delta: " << cen::ipoint{event.dx(), event.dy()} << " on window " << event.window_id() <<
+            " and widget: " << display_name() << "\n";
+        return false;
+    });
+}
+
+template<>
+bool Widget::propagate_event(cen::mouse_button_event &event, const std::shared_ptr<Widget> &, cen::ipoint pos, cen::iarea alloc)
+{
+    cen::irect child_rect{pos, alloc};
+    if (child_rect.contains(event.position())) {
+        event.set_x(event.x() - pos.x());
+        event.set_y(event.y() - pos.y());
         return true;
     }
+    return false;
+}
 
-    // TODO: bubbling handlers (+ check for cancellation)
-    if (event.is(cen::event_type::mouse_button_down)) {
-        const auto& btn_down = event.get<cen::mouse_button_event>();
-        // FIXME: remove debug messages
-        std::cout << "(bubbling): mouse click at coordinates x: " << btn_down.x() << " and y: " << btn_down.y() <<  " and relative position: " << position << " on window: " << btn_down.window_id() << ", on widget:" << display_name() << "\n";
+template<>
+bool Widget::propagate_event(cen::mouse_motion_event &event, const std::shared_ptr<Widget> &, cen::ipoint pos, cen::iarea alloc)
+{
+    cen::irect child_rect{pos, alloc};
+    if (child_rect.contains({event.x(), event.y()})) {
+        event.set_x(event.x() - pos.x());
+        event.set_y(event.y() - pos.y());
+        return true;
     }
-
     return false;
 }
