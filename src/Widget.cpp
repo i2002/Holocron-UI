@@ -58,10 +58,10 @@ void Widget::set_size(cen::iarea size_)
     size = size_;
 }*/
 
-cen::iarea Widget::get_allocated_size() const
+/*cen::iarea Widget::get_allocated_size() const
 {
     return allocated_size;
-}
+}*/
 
 void Widget::set_allocated_size(cen::iarea size_)
 {
@@ -122,4 +122,10 @@ bool Widget::propagate_event(cen::mouse_motion_event &event, const std::shared_p
         return true;
     }
     return false;
+}
+
+template<typename Event>
+bool Widget::propagate_event(Event &, const std::shared_ptr<Widget> &, cen::ipoint, cen::iarea)
+{
+    return true;
 }

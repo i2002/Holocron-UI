@@ -34,7 +34,7 @@ public:
 
 /*    [[nodiscard]] cen::iarea get_size() const;
     void set_size(cen::iarea size);*/
-    [[nodiscard]] cen::iarea get_allocated_size() const;
+    /*[[nodiscard]] cen::iarea get_allocated_size() const;*/
     virtual void set_allocated_size(cen::iarea size);
 
     template <typename Event, class Base = Widget>
@@ -89,12 +89,6 @@ bool Widget::process_event(Event event)
     }
 
     return cancelled;
-}
-
-template<typename Event>
-bool Widget::propagate_event(Event &, const std::shared_ptr<Widget> &, cen::ipoint, cen::iarea)
-{
-    return true;
 }
 
 #endif // WIDGET_H
