@@ -17,6 +17,7 @@ public:
     void display_attributes(std::ostream& os) const override;
     void display(std::ostream &os, int nest_level) const override;
     void set_allocated_size(cen::iarea size) override;
+    void set_hover(bool state, cen::ipoint pos = {0, 0}) override;
 
     [[nodiscard]] children_vector get_children() const override;
 

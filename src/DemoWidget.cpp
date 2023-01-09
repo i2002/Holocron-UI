@@ -39,4 +39,8 @@ void DemoWidget::display_attributes(std::ostream& os) const
 void DemoWidget::render(cen::renderer &renderer, cen::ipoint offset) const
 {
     Utilities::render_background(renderer, offset, size, color);
+    
+    if (hover) {
+        renderer.draw_rect(cen::irect{offset, allocated_size});
+    }
 }

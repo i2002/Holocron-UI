@@ -64,6 +64,20 @@ void Application::process_event(cen::event_handler &e)
         if (window_event.event_id() == cen::window_event_id::resized) {
             main_window.set_allocated_size({window_event.data1(), window_event.data2()});
         }
+
+        switch(window_event.event_id()) {
+            case cen::window_event_id::resized:
+            case cen::window_event_id::size_changed:
+                main_window.set_allocated_size({window_event.data1(), window_event.data2()});
+                break;
+
+            case cen::window_event_id::leave:
+                main_window.set_hover(false);
+                break;
+
+            default:
+                break;
+        }
     }
 
     if (e.is(cen::event_type::mouse_button_down)) {

@@ -55,6 +55,21 @@ void Container::set_allocated_size(cen::iarea size_)
     }
 }
 
+void Container::set_hover(bool state, cen::ipoint pos)
+{
+    if (state || hover != state) {
+        for (const auto& [child, child_pos, alloc] : children) {
+            cen::irect child_rect{child_pos, alloc};
+            if (child_rect.contains(pos) && state) {
+                child->set_hover(state, pos - child_pos);
+            } else {
+                child->set_hover(false);
+            }
+        }
+    }
+    Widget::set_hover(state, pos);
+}
+
 void Container::render(cen::renderer &renderer, cen::ipoint offset) const
 {
     Utilities::render_background(renderer, offset, size, background_color);

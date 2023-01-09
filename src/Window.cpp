@@ -10,6 +10,11 @@ Window::Window(const std::string &t, const cen::iarea &size, const cen::color &c
         dispatcher.run_handlers(std::string("message"));
         return false;
     });
+
+    add_event_handler<cen::mouse_motion_event>([this](cen::mouse_motion_event event) {
+        set_hover(true, {event.x(), event.y()});
+        return false;
+    });
 }
 
 Window::~Window()

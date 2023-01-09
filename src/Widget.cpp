@@ -30,6 +30,7 @@ void swap(Widget &first, Widget &second)
 void Widget::display_attributes(std::ostream& os) const
 {
     os << "size: " << size << ", "
+       << "hover: " << hover << ", "
        << "sizing policy: " << static_cast<int>(sizing_policy);
 }
 
@@ -72,6 +73,11 @@ void Widget::set_allocated_size(cen::iarea size_)
     }
 }
 
+void Widget::set_hover(bool state, cen::ipoint)
+{
+    hover = state;
+}
+
 Widget::children_vector Widget::get_children() const
 {
     return {};
@@ -88,7 +94,7 @@ void Widget::register_handlers()
         return false;
     });
 
-    dispatcher.add_handler<cen::mouse_motion_event>([this](cen::mouse_motion_event event) {
+    dispatcher.add_handler<cen::mouse_motion_event>([this](cen::mouse_motion_event event) {        
         if (!event.pressed(cen::mouse_button::left)) {
             return true;
         }
@@ -119,7 +125,10 @@ bool Widget::propagate_event(cen::mouse_motion_event &event, const std::shared_p
     if (child_rect.contains({event.x(), event.y()})) {
         event.set_x(event.x() - pos.x());
         event.set_y(event.y() - pos.y());
+        // w->set_hover(true, {event.x(), event.y()});
         return true;
+    } else {
+        // w->set_hover(false);
     }
     return false;
 }

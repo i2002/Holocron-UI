@@ -48,6 +48,10 @@ void TextBox::render(cen::renderer &renderer, cen::ipoint offset) const
     auto text_texture = renderer.make_texture(font.render_blended(text.c_str(), cen::colors::black));
     auto text_size = text_texture.size();
     renderer.render(text_texture, offset + text_positioning(text_size));
+    
+    if (hover) {
+        renderer.draw_rect(cen::irect{offset, allocated_size});
+    }
 }
 
 cen::ipoint TextBox::text_positioning(const cen::iarea &text_size) const

@@ -36,6 +36,7 @@ public:
     void set_size(cen::iarea size);*/
     /*[[nodiscard]] cen::iarea get_allocated_size() const;*/
     virtual void set_allocated_size(cen::iarea size);
+    virtual void set_hover(bool state, cen::ipoint pos = {0, 0});
 
     template <typename Event, class Base = Widget>
     void add_event_handler(EventDispatcher<>::handler_type<Event> hand) {
@@ -71,6 +72,7 @@ protected:
     SizingPolicy sizing_policy;
     Widget *parent = nullptr;
     WidgetEventDispatcher<> dispatcher;
+    bool hover = false;
 };
 
 // Template generic implementation
