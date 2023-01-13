@@ -1,10 +1,18 @@
+#include <iostream>
 #include "DemoWidget.h"
 #include "Utilities.h"
 
 DemoWidget::DemoWidget(const cen::iarea &size, const cen::color &color) :
     Widget{size, SizingPolicy::FIT_PARENT},
     color{color}
-{}
+{
+    add_event_handler<cen::mouse_button_event>([] (cen::mouse_button_event event) {
+        if (event.clicks() == 2 && event.pressed()) {
+            std::cout << "> DemoWidget double click\n";
+        }
+        return false;
+    });
+}
 
 DemoWidget& DemoWidget::operator=(DemoWidget other)
 {
@@ -38,9 +46,12 @@ void DemoWidget::display_attributes(std::ostream& os) const
 
 void DemoWidget::render(cen::renderer &renderer, cen::ipoint offset) const
 {
-    Utilities::render_background(renderer, offset, size, color);
+    Utilities::render_background(renderer, offset, size, active ? cen::colors::dark_gray : color);
     
     if (hover) {
+        cen::color overlay{0, 0, 0, 50};
+        renderer.set_blend_mode(cen::blend_mode::blend);
+        Utilities::render_background(renderer, offset, size, overlay);
         renderer.draw_rect(cen::irect{offset, allocated_size});
     }
 }
