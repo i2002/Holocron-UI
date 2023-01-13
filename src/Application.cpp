@@ -11,7 +11,7 @@ Application::Application() :
     // FIXME: window building outside of app
     auto cont1 = std::make_shared<GridContainer>(2, 2);
     auto cont2 = std::make_shared<GridContainer>(1, 3);
-    auto cont3 = std::make_shared<GridContainer>(1, 3);
+    auto cont3 = std::make_shared<GridContainer>(1, 4);
     auto ch1 = std::make_shared<DemoWidget>(cen::iarea{10, 10}, cen::colors::aqua);
     auto ch2 = std::make_shared<DemoWidget>(cen::iarea{20, 20}, cen::colors::red);
     auto ch3 = std::make_shared<DemoWidget>(cen::iarea{10, 10}, cen::colors::yellow);
@@ -35,6 +35,17 @@ Application::Application() :
     main_window.set_child(cont1);
     main_window.add_event_handler<std::string, Window>([](const std::string &event) {
         std::cout << "> Received window custom event: " << event << "\n";
+        return false;
+    });
+
+    ch1->add_event_handler<cen::mouse_button_event>([cont3] (cen::mouse_button_event event) {
+        if (!event.pressed()) {
+            return false;
+        }
+
+        std::cout << "> Insert new element\n";
+        auto ch_text = std::make_shared<TextBox>("Text extra", cen::iarea{100, 20}, TextBox::VerticalAlignment::MIDDLE, TextBox::HorizontalAlignment::CENTER);
+        cont3->add_child(ch_text, 0, 3);
         return false;
     });
 }
