@@ -1,9 +1,48 @@
 # Holocron UI
 Simple UI toolkit powered by SDL.
 
-## Usage
+This library was built as final project for the Object-Oriented Programming course at Faculty of Mathematics and Informatics, University of Bucharest.
 
-## Class list
+## Usage
+All classes are included in ...
+Link dependencies
+### Installation
+
+### Dependencies
+
+### Sample application
+
+## Documentation
+### Widget tree
+The core concept of this library is the widget tree. The user interface is built as a tree of widgets, with the root widget being a window.
+The widget tree handles basic tasks such as sizing, rendering and event propagation.
+
+### Class hierarchy
+- `Widget`
+- `Container`
+- `GridContainer`
+- `TextBox`
+- `Window`
+
+### Widget sizing and positioning
+
+### Event system
+The base `Widget` class is responsible for receiving and propagating GUI events applied to the window.
+Client code can register additional event handlers for custom functionality.
+In addition to that, each class inherited from `Widget` may have its own events to which client code can subscribe.
+
+In order to subscribe to an event it's necessary to specify the event type and the base class which emits it (by default it's Widget).
+```cpp
+main_window.add_event_handler<std::string, Window>([](const std::string &event) {
+    std::cout << "Window clicked: " << event << "\n";
+    return false;
+});
+```
+
+The event handler can be a function, member function bound to `this` or a lambda function that receives the event as the first parameter and
+an optional data parameter which is passed at handler registration.
+
+## Known issues
 
 ## Tasklist
 ### Tema 0
@@ -49,8 +88,8 @@ Simple UI toolkit powered by SDL.
 
 #### Cerințe
 - [ ] 2 șabloane de proiectare (design patterns)
-- [ ] o funcție șablon (template) cu sens; minim 2 instanțieri
-- [ ] o clasă șablon cu sens; minim 2 instanțieri
+- [x] o funcție șablon (template) cu sens; minim 2 instanțieri
+- [x] o clasă șablon cu sens; minim 2 instanțieri
 <!-- - [ ] o specializare pe funcție/clasă șablon -->
 - [ ] tag de `git`: de exemplu `v0.3` sau `v1.0`
 
