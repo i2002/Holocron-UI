@@ -73,6 +73,7 @@ protected:
     Widget *parent = nullptr;
     WidgetEventDispatcher<> dispatcher;
     bool hover = false;
+    bool active = false;
 };
 
 // Template generic implementation

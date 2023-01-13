@@ -87,10 +87,12 @@ Widget::children_vector Widget::get_children() const
 void Widget::register_handlers()
 {
     dispatcher.add_handler<cen::mouse_button_event>([this](cen::mouse_button_event event) {
-        std::cout << "mouse click at position: " << event.position() << " on window " << event.window_id() <<
+        std::cout << "mouse " << (event.pressed() ? "pressed" : "released") << " at position: " << event.position() << " on window " << event.window_id() <<
                   " and widget: " << display_name() << " (";
         display_attributes(std::cout);
         std::cout << ")\n";
+
+        active = event.pressed();
         return false;
     });
 
