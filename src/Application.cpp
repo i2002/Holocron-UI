@@ -25,6 +25,7 @@ Application::Application() :
     cont3->add_child(ch_text2, 0, 1);
     cont3->add_child(ch_text3, 0, 2);
     cont3->add_event_handler<cen::mouse_button_event>([] (cen::mouse_button_event) {
+        std::cout << "> Stop event propagation\n";
         return true;
     });
     cont1->add_child(ch3, 0, 0, 2);
@@ -33,7 +34,7 @@ Application::Application() :
 
     main_window.set_child(cont1);
     main_window.add_event_handler<std::string, Window>([](const std::string &event) {
-        std::cout << "Window clicked: " << event << "\n";
+        std::cout << "> Received window custom event: " << event << "\n";
         return false;
     });
 }
@@ -80,8 +81,10 @@ void Application::process_event(cen::event_handler &e)
         }
     }
 
-    if (e.is(cen::event_type::mouse_button_down)) {
+    if (e.is(cen::event_type::mouse_button_down) || e.is(cen::event_type::mouse_button_up)) {
+        std::cout << "------- Window click event received -------\n";
         main_window.process_event(e.get<cen::mouse_button_event>());
+        std::cout << "\n";
     } else if (e.is(cen::event_type::mouse_motion)) {
         main_window.process_event(e.get<cen::mouse_motion_event>());
     }

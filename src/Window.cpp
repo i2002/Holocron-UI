@@ -7,6 +7,7 @@ Window::Window(const std::string &t, const cen::iarea &size, const cen::color &c
     renderer{win.make_renderer()}
 {
     add_event_handler<cen::mouse_button_event>([this](cen::mouse_button_event) {
+        std::cout << "> Dispatch window event\n";
         dispatcher.run_handlers(std::string("message"));
         return false;
     });
