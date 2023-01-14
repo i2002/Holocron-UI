@@ -135,10 +135,13 @@ jobs:
           mkdir ${GITHUB_WORKSPACE}/artifacts
 
       # Common Linux dependencies
+      - name: Update Linux Packages
+        if: runner.os == 'Linux'
+        run: sudo apt-get update
+
       - name: Install Linux Dependencies
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get update
           sudo apt-get install --no-install-recommends \
             libxrandr-dev \
             libxcursor-dev \
@@ -156,10 +159,10 @@ jobs:
             libxkbcommon-x11-0 \
             libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xfixes0
 
+      # Install SDL Dependency
       - name: SDL Dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get update
           sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
           sudo mkdir -p /usr/lib/x86_64-linux-gnu/cmake/SDL2_image/
           sudo mkdir -p /usr/lib/x86_64-linux-gnu/cmake/SDL2_mixer/
@@ -179,29 +182,24 @@ jobs:
           brew install sdl2_mixer
           brew install sdl2_ttf
 
-
       - name: Install clang-tidy and libc++ (Linux Clang 14)
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-14'
         run: |
-          sudo apt-get update
           sudo apt-get install --no-install-recommends clang-tidy libc++-14-dev libc++abi-14-dev
 
       - name: Install ninja libc++ (Linux Clang 13)
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-13'
         run: |
-          sudo apt-get update
           sudo apt-get install --no-install-recommends ninja-build libc++-13-dev libc++abi-13-dev
 
       - name: Install clang-tidy and libc++ (Linux Clang 12)
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-12'
         run: |
-          sudo apt-get update
           sudo apt-get install --no-install-recommends libc++-12-dev libc++abi-12-dev
 
       - name: Install valgrind
         if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
         run: |
-          sudo apt-get update
           sudo apt-get install --no-install-recommends valgrind
 
       # temp workaround, there is a bug in xcode linker 14.0.1; as of now, 14.1 is in beta
@@ -211,6 +209,7 @@ jobs:
         with:
           xcode-version: '13.4.1'
 
+      # clang 13 linux tools
       - name: Cache tools
         uses: actions/cache@v3
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-13'
