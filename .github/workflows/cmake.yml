@@ -246,7 +246,7 @@ jobs:
         id: cache-deps
         # make the key depend on the dependency version
         with:
-          path: ${{ BUILD_DIR }}/_deps
+          path: ${{ env.BUILD_DIR }}/_deps
           key: cache-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}-${{ env.BUILD_TYPE }}
 
       # NOTE: GH Actions does not allow updating the cache yet
