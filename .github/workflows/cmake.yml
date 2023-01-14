@@ -274,6 +274,8 @@ jobs:
         uses: suisei-cn/actions-download-file@v1
         id: download-mingw-gcc
         if: runner.os == 'Windows' && matrix.cxx == 'g++' && steps.cache-mingw.outputs.cache-hit != 'true'
+        env:
+          INPUT_FILENAME: "${{ env.MINGW_VER }}"
         with:
           url: "https://github.com/brechtsanders/winlibs_mingw/releases/download/${{ env.MINGW_VER }}"
           target: compiler/
