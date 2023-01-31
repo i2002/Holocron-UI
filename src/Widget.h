@@ -36,7 +36,7 @@ public:
     void set_size(cen::iarea size);*/
     /*[[nodiscard]] cen::iarea get_allocated_size() const;*/
     virtual void set_allocated_size(cen::iarea size);
-    virtual void set_hover(bool state, cen::ipoint pos = {0, 0});
+    virtual void set_hover(std::variant<bool, cen::ipoint> state);
 
     template <typename Event, class Base = Widget>
     void add_event_handler(EventDispatcher<>::handler_type<Event> hand) {

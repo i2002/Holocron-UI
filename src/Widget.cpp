@@ -73,9 +73,13 @@ void Widget::set_allocated_size(cen::iarea size_)
     }
 }
 
-void Widget::set_hover(bool state, cen::ipoint)
+void Widget::set_hover(std::variant<bool, cen::ipoint> state)
 {
-    hover = state;
+    if (auto val = std::get_if<bool>(&state)) {
+        hover = *val;
+    } else {
+        hover = true;
+    }
 }
 
 Widget::children_vector Widget::get_children() const

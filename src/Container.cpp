@@ -55,19 +55,24 @@ void Container::set_allocated_size(cen::iarea size_)
     }
 }
 
-void Container::set_hover(bool state, cen::ipoint pos)
+void Container::set_hover(std::variant<bool, cen::ipoint> state)
 {
-    if (state || hover != state) {
+    if (auto pos = std::get_if<cen::ipoint>(&state)) {
         for (const auto& [child, child_pos, alloc] : children) {
             cen::irect child_rect{child_pos, alloc};
-            if (child_rect.contains(pos) && state) {
-                child->set_hover(state, pos - child_pos);
+            if (child_rect.contains(*pos)) {
+                child->set_hover(cen::ipoint{*pos - child_pos});
             } else {
                 child->set_hover(false);
             }
         }
+    } else if (std::get_if<bool>(&state) && hover) {
+        for (const auto& [child, child_pos, alloc] : children) {
+            child->set_hover(false);
+        }
     }
-    Widget::set_hover(state, pos);
+
+    Widget::set_hover(state);
 }
 
 void Container::render(cen::renderer &renderer, cen::ipoint offset) const

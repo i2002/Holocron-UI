@@ -13,7 +13,7 @@ Window::Window(const std::string &t, const cen::iarea &size, const cen::color &c
     });
 
     add_event_handler<cen::mouse_motion_event>([this](cen::mouse_motion_event event) {
-        set_hover(true, {event.x(), event.y()});
+        set_hover(cen::ipoint{event.x(), event.y()});
         return false;
     });
 }
