@@ -45,7 +45,7 @@ void TextBox::display_attributes(std::ostream &os) const
 void TextBox::render(cen::renderer &renderer, cen::ipoint offset) const
 {
     auto font = cen::font{font_name, 12};
-    auto text_texture = renderer.make_texture(font.render_blended(text.c_str(), cen::colors::black));
+    auto text_texture = renderer.make_texture(font.render_blended(text.c_str(), text_color));
     auto text_size = text_texture.size();
     renderer.render(text_texture, offset + text_positioning(text_size));
     

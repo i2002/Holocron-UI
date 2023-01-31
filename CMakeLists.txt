@@ -98,6 +98,8 @@ if(GITHUB_ACTIONS)
     target_compile_definitions(${PROJECT_NAME} PRIVATE GITHUB_ACTIONS)
 endif()
 
+target_compile_definitions(${PROJECT_NAME} PRIVATE HOLOCRONUI_DEBUG_MESSAGES)
+
 ###############################################################################
 
 # custom compiler flags

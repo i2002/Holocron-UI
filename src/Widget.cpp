@@ -91,23 +91,14 @@ Widget::children_vector Widget::get_children() const
 void Widget::register_handlers()
 {
     dispatcher.add_handler<cen::mouse_button_event>([this](cen::mouse_button_event event) {
+        #ifdef HOLOCRONUI_DEBUG_MESSAGES
         std::cout << "mouse " << (event.pressed() ? "pressed" : "released") << " at position: " << event.position() << " on window " << event.window_id() <<
                   " and widget: " << display_name() << " (";
         display_attributes(std::cout);
         std::cout << ")\n";
+        #endif // HOLOCRONUI_DEBUG_MESSAGES
 
         active = event.pressed();
-        return false;
-    });
-
-    dispatcher.add_handler<cen::mouse_motion_event>([this](cen::mouse_motion_event event) {        
-        if (!event.pressed(cen::mouse_button::left)) {
-            return true;
-        }
-
-        std::cout << "mouse motion at position: " << cen::ipoint{event.x(), event.y()} << ", "
-            "delta: " << cen::ipoint{event.dx(), event.dy()} << " on window " << event.window_id() <<
-            " and widget: " << display_name() << "\n";
         return false;
     });
 }
@@ -131,10 +122,7 @@ bool Widget::propagate_event(cen::mouse_motion_event &event, const std::shared_p
     if (child_rect.contains({event.x(), event.y()})) {
         event.set_x(event.x() - pos.x());
         event.set_y(event.y() - pos.y());
-        // w->set_hover(true, {event.x(), event.y()});
         return true;
-    } else {
-        // w->set_hover(false);
     }
     return false;
 }
