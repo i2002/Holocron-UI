@@ -53,5 +53,6 @@ void DemoWidget::render(cen::renderer &renderer, cen::ipoint offset) const
         renderer.set_blend_mode(cen::blend_mode::blend);
         Utilities::render_background(renderer, offset, size, overlay);
         renderer.draw_rect(cen::irect{offset, allocated_size});
+        renderer.set_blend_mode(cen::blend_mode::none);
     }
 }
