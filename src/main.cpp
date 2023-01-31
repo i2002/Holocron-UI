@@ -6,29 +6,33 @@
 #include <iostream>
 
 // test functions
-/*
 void test_constructor_implementation()
 {
+    std::cout << "------- Test constructors -------\n";
+    
     // static tests
+    std::cout << "> Static tests\n";
     Window wind1;
     wind1.show();
     Window wind2{"Title"};
     DemoWidget wdg1{cen::iarea{20,20}};
-    wind2.add_child(std::make_shared<DemoWidget>(wdg1), cen::ipoint{10, 10});
+    wind2.set_child(std::make_shared<DemoWidget>(wdg1));
     wind2.show();
-    wind2.render();
+    wind2.render_window();
     std::cout << wind2;
 
     // dynamic tests
+    std::cout << "> Dynamic tests\n";
+
     std::cout << "1.\n";
     Widget *w1 = new Window{"Hello"};
     std::cout << *w1;
 
     std::cout << "2.\n";
-    wind2.add_child(std::make_shared<DemoWidget>(cen::iarea{30, 30}, cen::colors::aqua), cen::ipoint{50, 50});
+    wind2.set_child(std::make_shared<DemoWidget>(cen::iarea{30, 30}, cen::colors::aqua));
     auto w2 = wind2.clone();
     if(auto w = std::dynamic_pointer_cast<Window>(w2)) {
-        w->render();
+        w->render_window();
     }
     std::cout << *w2;
 
@@ -36,7 +40,7 @@ void test_constructor_implementation()
     Window wind3{std::move(*dynamic_cast<Window*>(w2.get()))}; // now w3 is empty
     std::cout << wind3 << "\n" << *w2 << "\n";
     if(auto w = dynamic_cast<Window*>(w2.get())) {
-        w->render();
+        w->render_window();
         w->hide();
     }
     wind3.hide();
@@ -44,8 +48,9 @@ void test_constructor_implementation()
 
     // window show delay
     SDL_Delay(5000);
+    delete w1;
+    std::cout << "\n";
 }
-*/
 
 /*void test_widget_placement()
 {
@@ -63,6 +68,7 @@ void test_constructor_implementation()
 
 void test_containers()
 {
+    std::cout << "------- Test containers -------\n";
     Window w("Title");
     auto cont1 = std::make_shared<GridContainer>(2, 2);
     auto cont2 = std::make_shared<GridContainer>(1, 3);
@@ -94,54 +100,61 @@ void test_containers()
     }
     std::cout << *w2;
     SDL_Delay(5000);
+    std::cout << "\n";
 }
 
 void test_application()
 {
+    std::cout << "------- Test application run -------\n";
     Application a;
     std::cout << a;
     a.run();
+    std::cout << "\n";
 }
 
 bool func(int ev, char data)
 {
-    std::cout << "Function handler\n";
-    std::cout << ev << " " << data << "\n";
+    std::cout << "Event <int>, function handler ";
+    std::cout << "(event: " << ev << " with data: " << data << ")\n";
     return false;
 }
 
 void test_event_dispatcher()
 {
+    std::cout << "------- Test event dispatcher -------\n";
     EventDispatcher<int, double> ev{};
 
     ev.add_handler<int>([](int ev, double extra) {
-        std::cout << "Lambda handler\n";
-        std::cout << ev << " " << extra << "\n";
+        std::cout << "Event <int>, lambda handler ";
+        std::cout << "(event: " << ev << " with data: " << extra << ")\n";
         return true;
     }, 10.2);
     ev.add_handler<int>(func, '3');
     ev.add_handler<double>([](double ev) {
-        std::cout << "Without data: " << ev << "\n";
+        std::cout << "Event <double>, without data (event: " << ev << ")\n";
         return false;
     });
 
-    std::cout << "Running int event 2\n";
-    std::cout << ev.run_handlers(2) << "\n";
+    std::cout << "> Running <int> event 2\n";
+    int ret =  ev.run_handlers(2);
+    std::cout << "handler stop propagation: " << ret << "\n\n";
 
+    std::cout << "> Test remove handlers\n";
     ev.remove_handlers<int>();
 
-    std::cout << "Running int event 3\n";
+    std::cout << "\n> Running <int> event 3\n";
     ev.run_handlers(3);
+    std::cout << "\n";
 }
 
 
 void tests(int test)
 {
     switch (test) {
-/*        case 1:
+        case 1:
             test_constructor_implementation();
             break;
-        case 2:
+        /*case 2:
             test_widget_placement();
             break;*/
         case 3:
@@ -170,12 +183,13 @@ int main(int, char**)
     tests(5);
 
     // Launch application
+    std::cout << "------- Launch application -------\n";
     try {
         Application a;
-        std::cout << a;
+        std::cout << "> Application info:\n" << a << "\n";
         a.run();
     } catch (container_error &err) {
-        std::cout << "interface building error: " << err.what() << "\n";
+        std::cout << "! interface building error: " << err.what() << "\n";
     } catch (holocronui_error &err) {
         std::cout << err.what() << "\n";
     }
