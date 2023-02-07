@@ -24,9 +24,9 @@ Application::Application() :
     cont3->add_child(ch_text, 0, 0);
     cont3->add_child(ch_text2, 0, 1);
     cont3->add_child(ch_text3, 0, 2);
-    cont3->add_event_handler<cen::mouse_button_event>([] (cen::mouse_button_event) {
+    cont3->add_event_handler<cen::mouse_button_event>([] (cen::mouse_button_event, EventActions &actions) {
         std::cout << "> Stop event propagation\n";
-        return true;
+        actions.stopPropagation();
     });
     cont1->add_child(ch3, 0, 0, 2);
     cont1->add_child(cont2, 1, 1);
@@ -38,15 +38,14 @@ Application::Application() :
         return false;
     });
 
-    ch1->add_event_handler<cen::mouse_button_event>([cont3] (cen::mouse_button_event event) {
+    ch1->add_event_handler<cen::mouse_button_event>([cont3] (cen::mouse_button_event event, EventActions&) {
         if (!event.pressed()) {
-            return false;
+            return;
         }
 
         std::cout << "> Insert new element\n";
         auto ch_text = std::make_shared<TextBox>("Text extra", cen::iarea{100, 20}, TextBox::VerticalAlignment::MIDDLE, TextBox::HorizontalAlignment::CENTER);
         cont3->add_child(ch_text, 0, 3);
-        return false;
     });
 }
 

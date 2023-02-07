@@ -5,6 +5,9 @@
 #include <vector>
 #include <functional>
 
+template <typename Event>
+using handler_func_t = std::function<void(Event&)>;
+
 template<typename ...Events>
 class EventDispatcher
 {
@@ -15,22 +18,7 @@ class EventDispatcher
 
 public:
     template <typename Event>
-    using handler_type = std::function<bool (Event)>;
-
-    template <typename Event, typename Data>
-    using handler_type_data = std::function<bool (Event, Data)>;
-
-    template <typename Event>
-    using event_wrapper = std::vector<handler_type<Event>>;
-
-    /**
-     * Disable template deduction for function params:
-     * Source: https://stackoverflow.com/questions/37737487/better-way-to-disable-argument-based-template-parameter-deduction-for-functions
-     * Further reading:
-     * - https://artificial-mind.net/blog/2020/09/26/dont-deduce
-     * - https://en.cppreference.com/w/cpp/language/template_argument_deduction#Non-deduced_contexts
-     * - https://en.cppreference.com/w/cpp/types/type_identity
-     */
+    using event_wrapper = std::vector<handler_func_t<Event>>;
 
     ~EventDispatcher()
     {
@@ -38,28 +26,26 @@ public:
     }
 
     template <typename Event>
-    void add_handler(handler_type<Event> handler)
+    void add_handler(handler_func_t<Event> handler)
     {
         get_handlers<Event>().push_back(handler);
     }
 
-    template <typename Event, typename Data>
-    void add_handler(handler_type_data<Event, std::common_type_t<Data>> handler, Data data)
+    template <typename Event>
+    void run_handlers(Event &event)
     {
-        using namespace std::placeholders;
-        auto data_handler = std::bind(handler, _1, data);
-        get_handlers<Event>().push_back(data_handler);
+        for (auto hand : get_handlers<Event>()) {
+            hand(event);
+        }
     }
 
     template <typename Event>
-    bool run_handlers(Event ev)
+    void run_handlers(const Event &ev)
     {
-        bool cancelled = false;
+        Event ev_copy = ev;
         for (auto hand : get_handlers<Event>()) {
-            cancelled = hand(ev) || cancelled;
+            hand(ev_copy);
         }
-
-        return cancelled;
     }
 
     template <typename Event>

@@ -7,11 +7,10 @@ DemoWidget::DemoWidget(const cen::iarea &size, const cen::color &color) :
     color{color}
 {
     #ifdef HOLOCRONUI_DEBUG_MESSAGES
-    add_event_handler<cen::mouse_button_event>([] (cen::mouse_button_event event) {
+    add_event_handler<cen::mouse_button_event>([] (cen::mouse_button_event event, EventActions&) {
         if (event.clicks() == 2 && event.pressed()) {
             std::cout << "> DemoWidget double click\n";
         }
-        return false;
     });
     #endif // HOLOCRONUI_DEBUG_MESSAGES
 }

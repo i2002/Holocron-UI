@@ -6,15 +6,13 @@ Window::Window(const std::string &t, const cen::iarea &size, const cen::color &c
     win{t, size, cen::window::window_flags::resizable},
     renderer{win.make_renderer()}
 {
-    add_event_handler<cen::mouse_button_event>([this](cen::mouse_button_event) {
+    add_event_handler<cen::mouse_button_event>([this](cen::mouse_button_event, EventActions&) {
         std::cout << "> Dispatch window event\n";
         dispatcher.run_handlers(std::string("message"));
-        return false;
     });
 
-    add_event_handler<cen::mouse_motion_event>([this](cen::mouse_motion_event event) {
+    add_event_handler<cen::mouse_motion_event>([this](cen::mouse_motion_event event, EventActions&) {
         set_hover(cen::ipoint{event.x(), event.y()});
-        return false;
     });
 }
 

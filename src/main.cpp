@@ -112,11 +112,10 @@ void test_application()
     std::cout << "\n";
 }
 
-bool func(int ev, char data)
+void func(int ev, char data)
 {
     std::cout << "Event <int>, function handler ";
     std::cout << "(event: " << ev << " with data: " << data << ")\n";
-    return false;
 }
 
 void test_event_dispatcher()
@@ -124,20 +123,17 @@ void test_event_dispatcher()
     std::cout << "------- Test event dispatcher -------\n";
     EventDispatcher<int, double> ev{};
 
-    ev.add_handler<int>([](int ev, double extra) {
+    ev.add_handler<int>(std::bind([](int ev, double extra) {
         std::cout << "Event <int>, lambda handler ";
         std::cout << "(event: " << ev << " with data: " << extra << ")\n";
-        return true;
-    }, 10.2);
-    ev.add_handler<int>(func, '3');
+    }, std::placeholders::_1, 10.2));
+    ev.add_handler<int>(std::bind(func, std::placeholders::_1, '3'));
     ev.add_handler<double>([](double ev) {
         std::cout << "Event <double>, without data (event: " << ev << ")\n";
-        return false;
     });
 
     std::cout << "> Running <int> event 2\n";
-    int ret =  ev.run_handlers(2);
-    std::cout << "handler stop propagation: " << ret << "\n\n";
+    ev.run_handlers(2);
 
     std::cout << "> Test remove handlers\n";
     ev.remove_handlers<int>();

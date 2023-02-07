@@ -90,7 +90,7 @@ Widget::children_vector Widget::get_children() const
 // ------------------ Event handling -----------------
 void Widget::register_handlers()
 {
-    dispatcher.add_handler<cen::mouse_button_event>([this](cen::mouse_button_event event) {
+    add_event_handler<cen::mouse_button_event>([this](cen::mouse_button_event event, EventActions&) {
         #ifdef HOLOCRONUI_DEBUG_MESSAGES
         std::cout << "mouse " << (event.pressed() ? "pressed" : "released") << " at position: " << event.position() << " on window " << event.window_id() <<
                   " and widget: " << display_name() << " (";
@@ -99,7 +99,6 @@ void Widget::register_handlers()
         #endif // HOLOCRONUI_DEBUG_MESSAGES
 
         active = event.pressed();
-        return false;
     });
 }
 
