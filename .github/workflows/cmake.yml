@@ -394,6 +394,7 @@ jobs:
                    --suppress=missingIncludeSystem \
                    --suppress=unmatchedSuppression \
                    --suppress=useStlAlgorithm \
+                   --inline-suppr \
                    --error-exitcode=1
 
       - name: Clang-tidy
