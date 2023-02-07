@@ -77,6 +77,9 @@ void Widget::set_hover(std::variant<bool, cen::ipoint> state)
 {
     if (auto val = std::get_if<bool>(&state)) {
         hover = *val;
+        if (!hover) {
+            active = false;
+        }
     } else {
         hover = true;
     }
