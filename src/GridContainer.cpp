@@ -74,7 +74,7 @@ cen::ipoint GridContainer::get_child_position(size_t index) const
     return {p.col * col_size, p.row * row_size};
 }
 
-cen::iarea GridContainer::get_child_allocation(size_t index) const
+cen::iarea GridContainer::get_child_allocation(size_t index, std::shared_ptr<Widget>) const
 {
     Position p = positioning_data[index];
     int row_size = size.height / rows;

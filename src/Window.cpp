@@ -97,7 +97,7 @@ cen::ipoint Window::get_child_position(size_t) const
     return {0, 0};
 }
 
-cen::iarea Window::get_child_allocation(size_t) const
+cen::iarea Window::get_child_allocation(size_t, std::shared_ptr<Widget>) const
 {
     return size;
 }

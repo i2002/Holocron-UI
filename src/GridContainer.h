@@ -32,7 +32,7 @@ public:
 
 protected:
     [[nodiscard]] cen::ipoint get_child_position(size_t index) const override;
-    [[nodiscard]] cen::iarea get_child_allocation(size_t index) const override;
+    [[nodiscard]] cen::iarea get_child_allocation(size_t index, std::shared_ptr<Widget> child) const override;
     [[nodiscard]] bool check_collisions(Position pos) const;
 
 private:

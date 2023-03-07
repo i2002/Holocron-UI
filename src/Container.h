@@ -27,7 +27,7 @@ protected:
 
     void add_child(const std::shared_ptr<Widget> &w);
     [[nodiscard]] virtual cen::ipoint get_child_position(size_t index) const = 0;
-    [[nodiscard]] virtual cen::iarea get_child_allocation(size_t index) const = 0;
+    [[nodiscard]] virtual cen::iarea get_child_allocation(size_t index, std::shared_ptr<Widget> child) const = 0;
 
     children_vector children;
     cen::color background_color;

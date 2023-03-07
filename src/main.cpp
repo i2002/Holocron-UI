@@ -4,6 +4,7 @@
 #include "exceptions.h"
 #include "EventDispatcher.h"
 #include "TextBox.h"
+#include "BoxContainer.h"
 #include <iostream>
 
 // test functions
@@ -193,6 +194,22 @@ void test_application_events()
     a->run();
 }
 
+void test_box_container()
+{
+    std::cout << "------- Test BoxContainer -------\n";
+    auto a = std::make_shared<Application>();
+    a->add_event_handler<app_startup_event>([] (const app_startup_event& event) {
+        Window& main_window = event.get_app()->get_window();
+        auto cont1 = std::make_shared<BoxContainer>(BoxDirection::VERTICAL);
+        auto ch1 = std::make_shared<DemoWidget>(cen::iarea{10, 10}, cen::colors::aqua);
+        auto ch2 = std::make_shared<DemoWidget>(cen::iarea{20, 200}, cen::colors::red);
+        cont1->append_child(ch1, true);
+        cont1->append_child(ch2);
+        main_window.set_child(cont1);
+    });
+    a->run();
+}
+
 void tests(int test)
 {
     switch (test) {
@@ -214,6 +231,9 @@ void tests(int test)
         case 6:
             test_application_events();
             break;
+        case 7:
+            test_box_container();
+            break;
         default:
             std::cout << "Invalid test\n";
             break;
@@ -228,7 +248,7 @@ int main(int, char**)
     const cen::ttf ttf;
 
     // Tests
-    tests(6);
+    tests(7);
 
     // Launch application
 /*    std::cout << "------- Launch application -------\n";

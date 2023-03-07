@@ -50,7 +50,7 @@ void Container::set_allocated_size(cen::iarea size_)
     for (size_t i = 0; i < children.size(); i++) {
         auto& [child, pos, alloc] = children[i];
         pos = get_child_position(i);
-        alloc = get_child_allocation(i);
+        alloc = get_child_allocation(i, child);
         child->set_allocated_size(alloc);
     }
 }
@@ -92,7 +92,7 @@ Widget::children_vector Container::get_children() const
 void Container::add_child(const std::shared_ptr<Widget> &w)
 {
     auto pos = get_child_position(children.size());
-    auto alloc = get_child_allocation(children.size());
+    auto alloc = get_child_allocation(children.size(), w);
 
     auto child_clone = w;
     child_clone->parent = this;
