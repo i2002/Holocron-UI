@@ -15,7 +15,7 @@ public:
         this->app = app;
     }
 
-    Application* get_app() const {
+    [[nodiscard]] Application* get_app() const {
         return app;
     }
 };

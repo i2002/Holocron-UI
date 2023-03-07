@@ -8,7 +8,7 @@ enum class BoxDirection {HORIZONTAL, VERTICAL};
 class BoxContainer : public Container
 {
 public:
-    BoxContainer(BoxDirection dir = BoxDirection::VERTICAL, const cen::color &background_color = cen::colors::white);
+    explicit BoxContainer(BoxDirection dir = BoxDirection::VERTICAL, const cen::color &background_color = cen::colors::white);
     BoxContainer(const BoxContainer &other) = default;
     BoxContainer(BoxContainer &&other) = default;
 
@@ -26,12 +26,11 @@ protected:
     [[nodiscard]] cen::ipoint get_child_position(size_t index) const override;
     [[nodiscard]] cen::iarea get_child_allocation(size_t index, std::shared_ptr<Widget> child) const override;
     [[nodiscard]] int get_expanded_size() const;
+    [[nodiscard]] int get_widget_dimension(const Widget &child) const;
+    [[nodiscard]] cen::iarea create_allocation(int child_size) const;
+    [[nodiscard]] cen::ipoint create_position(int child_position) const;
 
 private:
-    int get_widget_dimension(const Widget &child) const;
-    cen::iarea create_allocation(int child_size) const;
-    cen::ipoint create_position(int child_position) const;
-
     std::vector<bool> expand;
     int nr_expanded = 0;
     int total_fixed_size = 0;

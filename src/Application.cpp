@@ -1,8 +1,4 @@
 #include "Application.h"
-#include "Widget.h"
-#include "DemoWidget.h"
-#include "GridContainer.h"
-#include "TextBox.h"
 #include <iostream>
 
 Application::Application() :
