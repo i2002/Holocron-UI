@@ -5,6 +5,7 @@
 #include "EventDispatcher.h"
 #include "TextBox.h"
 #include "BoxContainer.h"
+#include "Button.h"
 #include <iostream>
 
 // test functions
@@ -210,6 +211,20 @@ void test_box_container()
     a->run();
 }
 
+void test_button()
+{
+    std::cout << "------- Test Button -------\n";
+    auto a = std::make_shared<Application>();
+    a->add_event_handler<app_startup_event>([] (const app_startup_event& event) {
+        Window& main_window = event.get_app()->get_window();
+        auto cont1 = std::make_shared<BoxContainer>(BoxDirection::VERTICAL);
+        auto ch1 = std::make_shared<Button>("Click me");
+        cont1->append_child(ch1);
+        main_window.set_child(cont1);
+    });
+    a->run();
+}
+
 void tests(int test)
 {
     switch (test) {
@@ -234,6 +249,9 @@ void tests(int test)
         case 7:
             test_box_container();
             break;
+        case 8:
+            test_button();
+            break;
         default:
             std::cout << "Invalid test\n";
             break;
@@ -248,7 +266,7 @@ int main(int, char**)
     const cen::ttf ttf;
 
     // Tests
-    tests(7);
+    tests(8);
 
     // Launch application
 /*    std::cout << "------- Launch application -------\n";
