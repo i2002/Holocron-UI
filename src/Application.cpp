@@ -7,50 +7,11 @@
 
 Application::Application() :
     main_window{"Title"}
-{
-    // FIXME: window building outside of app
-    auto cont1 = std::make_shared<GridContainer>(2, 2);
-    auto cont2 = std::make_shared<GridContainer>(1, 3);
-    auto cont3 = std::make_shared<GridContainer>(1, 4);
-    auto ch1 = std::make_shared<DemoWidget>(cen::iarea{10, 10}, cen::colors::aqua);
-    auto ch2 = std::make_shared<DemoWidget>(cen::iarea{20, 20}, cen::colors::red);
-    auto ch3 = std::make_shared<DemoWidget>(cen::iarea{10, 10}, cen::colors::yellow);
-    auto ch_text = std::make_shared<TextBox>("Text 1", cen::iarea{100, 20});
-    auto ch_text2 = std::make_shared<TextBox>("Text 2", cen::iarea{100, 20}, TextBox::VerticalAlignment::MIDDLE, TextBox::HorizontalAlignment::CENTER);
-    auto ch_text3 = std::make_shared<TextBox>("Text 3", cen::iarea{100, 20}, TextBox::VerticalAlignment::BOTTOM, TextBox::HorizontalAlignment::RIGHT);
-
-    cont2->add_child(ch1, 0, 0);
-    cont2->add_child(ch2, 0, 1, 1, 2);
-    cont3->add_child(ch_text, 0, 0);
-    cont3->add_child(ch_text2, 0, 1);
-    cont3->add_child(ch_text3, 0, 2);
-    cont3->add_event_handler<cen::mouse_button_event>([] (cen::mouse_button_event, EventActions &actions) {
-        std::cout << "> Stop event propagation\n";
-        actions.stopPropagation();
-    });
-    cont1->add_child(ch3, 0, 0, 2);
-    cont1->add_child(cont2, 1, 1);
-    cont1->add_child(cont3, 0, 1);
-
-    main_window.set_child(cont1);
-    main_window.add_event_handler<std::string, Window>([](const std::string &event) {
-        std::cout << "> Received window custom event: " << event << "\n";
-        return false;
-    });
-
-    ch1->add_event_handler<cen::mouse_button_event>([cont3] (cen::mouse_button_event event, EventActions&) {
-        if (!event.pressed()) {
-            return;
-        }
-
-        std::cout << "> Insert new element\n";
-        auto ch_text = std::make_shared<TextBox>("Text extra", cen::iarea{100, 20}, TextBox::VerticalAlignment::MIDDLE, TextBox::HorizontalAlignment::CENTER);
-        cont3->add_child(ch_text, 0, 3);
-    });
-}
+{}
 
 void Application::run()
 {
+    dispatcher.run_handlers(app_startup_event(this));
     main_window.show();
     running = true;
     while(running) {
@@ -60,6 +21,7 @@ void Application::run()
 
         main_window.render_window();
     }
+    dispatcher.run_handlers(app_shutdown_event(this));
 }
 
 void Application::process_event(cen::event_handler &e)
@@ -106,6 +68,10 @@ void Application::process_event(cen::event_handler &e)
     } else if (e.is(cen::event_type::mouse_motion)) {
         main_window.process_event(e.get<cen::mouse_motion_event>());
     }
+}
+
+Window& Application::get_window() {
+    return main_window;
 }
 
 std::ostream& operator<<(std::ostream& os, const Application &a)

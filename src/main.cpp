@@ -3,6 +3,7 @@
 #include "GridContainer.h"
 #include "exceptions.h"
 #include "EventDispatcher.h"
+#include "TextBox.h"
 #include <iostream>
 
 // test functions
@@ -143,6 +144,54 @@ void test_event_dispatcher()
     std::cout << "\n";
 }
 
+void test_application_events()
+{
+    std::cout << "------- Test application events -------\n";
+    auto a = std::make_shared<Application>();
+    a->add_event_handler<app_startup_event>([] (const app_startup_event& event) {
+        std::cout << "> Application startup\n";
+        Window& main_window = event.get_app()->get_window();
+        auto cont1 = std::make_shared<GridContainer>(2, 2);
+        auto cont2 = std::make_shared<GridContainer>(1, 3);
+        auto cont3 = std::make_shared<GridContainer>(1, 4);
+        auto ch1 = std::make_shared<DemoWidget>(cen::iarea{10, 10}, cen::colors::aqua);
+        auto ch2 = std::make_shared<DemoWidget>(cen::iarea{20, 20}, cen::colors::red);
+        auto ch3 = std::make_shared<DemoWidget>(cen::iarea{10, 10}, cen::colors::yellow);
+        auto ch_text = std::make_shared<TextBox>("Text 1", cen::iarea{100, 20});
+        auto ch_text2 = std::make_shared<TextBox>("Text 2", cen::iarea{100, 20}, TextBox::VerticalAlignment::MIDDLE, TextBox::HorizontalAlignment::CENTER);
+        auto ch_text3 = std::make_shared<TextBox>("Text 3", cen::iarea{100, 20}, TextBox::VerticalAlignment::BOTTOM, TextBox::HorizontalAlignment::RIGHT);
+
+        cont2->add_child(ch1, 0, 0);
+        cont2->add_child(ch2, 0, 1, 1, 2);
+        cont3->add_child(ch_text, 0, 0);
+        cont3->add_child(ch_text2, 0, 1);
+        cont3->add_child(ch_text3, 0, 2);
+        cont3->add_event_handler<cen::mouse_button_event>([] (cen::mouse_button_event, EventActions &actions) {
+            std::cout << "> Stop event propagation\n";
+            actions.stopPropagation();
+        });
+        cont1->add_child(ch3, 0, 0, 2);
+        cont1->add_child(cont2, 1, 1);
+        cont1->add_child(cont3, 0, 1);
+
+        main_window.set_child(cont1);
+        main_window.add_event_handler<std::string, Window>([](const std::string &event) {
+            std::cout << "> Received window custom event: " << event << "\n";
+            return false;
+        });
+
+        ch1->add_event_handler<cen::mouse_button_event>([cont3] (cen::mouse_button_event event, EventActions&) {
+            if (!event.pressed()) {
+                return;
+            }
+
+            std::cout << "> Insert new element\n";
+            auto ch_text = std::make_shared<TextBox>("Text extra", cen::iarea{100, 20}, TextBox::VerticalAlignment::MIDDLE, TextBox::HorizontalAlignment::CENTER);
+            cont3->add_child(ch_text, 0, 3);
+        });
+    });
+    a->run();
+}
 
 void tests(int test)
 {
@@ -162,6 +211,9 @@ void tests(int test)
         case 5:
             test_event_dispatcher();
             break;
+        case 6:
+            test_application_events();
+            break;
         default:
             std::cout << "Invalid test\n";
             break;
@@ -176,10 +228,10 @@ int main(int, char**)
     const cen::ttf ttf;
 
     // Tests
-    tests(5);
+    tests(6);
 
     // Launch application
-    std::cout << "------- Launch application -------\n";
+/*    std::cout << "------- Launch application -------\n";
     try {
         Application a;
         std::cout << "> Application info:\n" << a << "\n";
@@ -188,7 +240,7 @@ int main(int, char**)
         std::cout << "! interface building error: " << err.what() << "\n";
     } catch (holocronui_error &err) {
         std::cout << err.what() << "\n";
-    }
+    }*/
 
     return 0;
 }
