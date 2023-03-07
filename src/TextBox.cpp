@@ -1,11 +1,12 @@
 #include "TextBox.h"
+#include <utility>
 
 const std::string TextBox::font_name = "OpenSans-Regular.ttf";
 
-TextBox::TextBox(const std::string &text, const cen::iarea &box_size, VerticalAlignment vertical_alignment,
+TextBox::TextBox(std::string text, const cen::iarea &box_size, VerticalAlignment vertical_alignment,
                  HorizontalAlignment horizontal_alignment, const cen::color &text_color) :
                     Widget(box_size, SizingPolicy::FIT_PARENT),
-                    text{text}, text_color{text_color}, valign{vertical_alignment}, halign{horizontal_alignment}
+                    text{std::move(text)}, text_color{text_color}, valign{vertical_alignment}, halign{horizontal_alignment}
 {}
 
 TextBox& TextBox::operator=(TextBox other)

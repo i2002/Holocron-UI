@@ -21,9 +21,9 @@ Window::~Window()
     win.hide();
 }
 
-Window::Window(const Window &w) :
-    Container{w},
-    win{w.win.title(), size},
+Window::Window(const Window &other) :
+    Container{other},
+    win{other.win.title(), size},
     renderer{win.make_renderer()}
 {
 }

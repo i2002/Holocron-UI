@@ -126,11 +126,12 @@ void test_event_dispatcher()
     std::cout << "------- Test event dispatcher -------\n";
     EventDispatcher<int, double> ev{};
 
-    ev.add_handler<int>(std::bind([](int ev, double extra) {
+    auto handler = [](int ev, double extra) {
         std::cout << "Event <int>, lambda handler ";
         std::cout << "(event: " << ev << " with data: " << extra << ")\n";
-    }, std::placeholders::_1, 10.2));
-    ev.add_handler<int>(std::bind(func, std::placeholders::_1, '3'));
+    };
+    ev.add_handler<int>([handler](int ev) {handler(ev, 10.3)});
+    ev.add_handler<int>([](auto && PH1) { return func(std::forward<decltype(PH1)>(PH1), '3'); });
     ev.add_handler<double>([](double ev) {
         std::cout << "Event <double>, without data (event: " << ev << ")\n";
     });

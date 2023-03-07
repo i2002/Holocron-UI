@@ -16,7 +16,7 @@ class TextBox : public Widget
 public:
     enum class VerticalAlignment {TOP, MIDDLE, BOTTOM};
     enum class HorizontalAlignment {LEFT, CENTER, RIGHT};
-    explicit TextBox(const std::string &text = "", const cen::iarea &box_size = {0, 0}, VerticalAlignment vertical_alignment = VerticalAlignment::TOP,
+    explicit TextBox(std::string text = "", const cen::iarea &box_size = {0, 0}, VerticalAlignment vertical_alignment = VerticalAlignment::TOP,
                      HorizontalAlignment horizontal_alignment = HorizontalAlignment::LEFT, const cen::color &text_color = cen::colors::black);
     TextBox(const TextBox &other) = default;
     TextBox(TextBox &&other) = default;
