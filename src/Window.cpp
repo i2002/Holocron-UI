@@ -92,6 +92,18 @@ void Window::set_child(const std::shared_ptr<Widget> &w)
     Container::add_child(w);
 }
 
+void Window::set_focused_widget(Widget *widget) {
+    if (focused_widget != nullptr) {
+        focused_widget->set_focused(false);
+    }
+
+    focused_widget = widget;
+
+    if (focused_widget != nullptr) {
+        focused_widget->set_focused(true);
+    }
+}
+
 cen::ipoint Window::get_child_position(size_t) const
 {
     return {0, 0};

@@ -6,6 +6,9 @@
 #include <string>
 #include "EventDispatcher.h"
 
+// Window forward declaration
+class Window;
+
 // Generic widget event handler templates
 template <typename Event, typename Base>
 struct widget_handler_func final
@@ -95,6 +98,7 @@ using WidgetEventDispatcher = EventDispatcher<WidgetEvent<Events>...>;
 class Widget
 {
     friend class Container;
+    friend class Window;
 
 protected:
     using children_vector = std::vector<std::tuple<std::shared_ptr<Widget>, cen::ipoint, cen::iarea>>;
@@ -120,6 +124,10 @@ public:
     virtual void set_allocated_size(cen::iarea size);
     virtual void set_hover(std::variant<bool, cen::ipoint> state);
 
+    virtual bool focusable();
+    /*bool get_focused();*/
+    virtual void set_focused(bool state);
+
     template <typename Event, class Base = Widget>
     void add_event_handler(widget_handler_func_t<Event, Base> hand);
 
@@ -135,10 +143,13 @@ protected:
     void register_handlers();
 
     template<typename Event>
-    bool process_event(Event);
+    bool process_event(Event, Window &root);
 
     template <typename Event>
     bool propagate_event(Event &event, const std::shared_ptr<Widget> &w, cen::ipoint pos, cen::iarea alloc);
+
+    template <typename Event>
+    void process_focus(Event &event, Window &root);
 
     // TODO: sizing based on widget size requirement? (-> scrolling)
     // TODO: margins in relation to parent (px or %)
@@ -149,6 +160,7 @@ protected:
     WidgetEventDispatcher<cen::mouse_button_event, cen::mouse_motion_event> dispatcher;
     bool hover = false;
     bool active = false;
+    bool focused = false;
 };
 
 // Template generic implementation
@@ -159,22 +171,41 @@ void Widget::add_event_handler(widget_handler_func_t<Event, Base> hand) {
 }
 
 template<typename Event>
-bool Widget::process_event(Event event)
+bool Widget::process_event(Event event, Window &root)
 {
+    // widget focus change
+    process_focus(event, root);
+
+    // run handlers
     auto widget_event = WidgetEvent(event);
     dispatcher.run_handlers(widget_event);
+
+    // stop event propagation
     if (widget_event.getEventActions().isPropagationStopped()) {
         return true;
     }
 
+    // propagate event
     bool cancelled = false;
     for (const auto &[w, pos, alloc] : get_children()) {
         if (propagate_event(event, w, pos, alloc)) {
-            cancelled = w->process_event(event) || cancelled;
+            cancelled = w->process_event(event, root) || cancelled;
         }
     }
 
     return cancelled;
+}
+
+template<typename Event>
+bool Widget::propagate_event(Event &, const std::shared_ptr<Widget> &, cen::ipoint, cen::iarea)
+{
+    return true;
+}
+
+template<typename Event>
+void Widget::process_focus(Event &, Window &)
+{
+
 }
 
 #endif // WIDGET_H

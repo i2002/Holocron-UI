@@ -29,6 +29,7 @@ public:
     void show();
     void hide();
     void set_child(const std::shared_ptr<Widget> &w);
+    void set_focused_widget(Widget *widget);
 
 protected:
     [[nodiscard]] cen::ipoint get_child_position(size_t index) const override;
@@ -40,6 +41,19 @@ protected:
 private:
     cen::window win;
     cen::renderer renderer;
+    Widget* focused_widget = nullptr;
+
+    template <typename Event>
+    void process_focussed_event(Event &event);
 };
+
+template<typename Event>
+void Window::process_focussed_event(Event &event) {
+    if (focused_widget == nullptr) {
+        return;
+    }
+
+    focused_widget->process_event(event, *this);
+}
 
 #endif // WINDOW_H

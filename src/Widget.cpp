@@ -1,4 +1,5 @@
 #include "Widget.h"
+#include "Window.h"
 #include <iostream>
 
 // ------------- Constructors and destructors -------------
@@ -85,12 +86,26 @@ void Widget::set_hover(std::variant<bool, cen::ipoint> state)
     }
 }
 
+bool Widget::focusable() {
+    return false;
+}
+
+/*bool Widget::get_focused() {
+    return focused;
+}*/
+
+void Widget::set_focused(bool state)
+{
+    focused = state;
+}
+
 Widget::children_vector Widget::get_children() const
 {
     return {};
 }
 
 // ------------------ Event handling -----------------
+// Default event handlers
 void Widget::register_handlers()
 {
     add_event_handler<cen::mouse_button_event>([this](cen::mouse_button_event event, EventActions&) {
@@ -105,6 +120,7 @@ void Widget::register_handlers()
     });
 }
 
+// Event propagation
 template<>
 bool Widget::propagate_event(cen::mouse_button_event &event, const std::shared_ptr<Widget> &, cen::ipoint pos, cen::iarea alloc)
 {
@@ -129,8 +145,14 @@ bool Widget::propagate_event(cen::mouse_motion_event &event, const std::shared_p
     return false;
 }
 
-template<typename Event>
-bool Widget::propagate_event(Event &, const std::shared_ptr<Widget> &, cen::ipoint, cen::iarea)
-{
-    return true;
+// Widget focus
+template<>
+void Widget::process_focus(cen::mouse_button_event &event, Window &root) {
+    if (event.released() && event.clicks() == 1) {
+        if (focusable()) {
+            root.set_focused_widget(this);
+        } else {
+            root.set_focused_widget(nullptr);
+        }
+    }
 }

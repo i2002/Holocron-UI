@@ -56,13 +56,13 @@ void Application::process_event(cen::event_handler &e)
         #ifdef HOLOCRONUI_DEBUG_MESSAGES
         std::cout << "--- Window click event received\n";
         #endif // HOLOCRONUI_DEBUG_MESSAGES
-        main_window.process_event(e.get<cen::mouse_button_event>());
+        main_window.process_event(e.get<cen::mouse_button_event>(), main_window);
 
         #ifdef HOLOCRONUI_DEBUG_MESSAGES
         std::cout << "\n";
         #endif // HOLOCRONUI_DEBUG_MESSAGES
     } else if (e.is(cen::event_type::mouse_motion)) {
-        main_window.process_event(e.get<cen::mouse_motion_event>());
+        main_window.process_event(e.get<cen::mouse_motion_event>(), main_window);
     }
 }
 
