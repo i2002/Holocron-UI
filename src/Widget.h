@@ -167,13 +167,15 @@ protected:
     bool focused = false;
 };
 
-// Template generic implementation
+// --- Template generic implementation ---
+// Add event handler
 template <typename Event, class Base>
 void Widget::add_event_handler(widget_handler_func_t<Event, Base> hand) {
     auto handWrapper = convert_handler_func<Event, Base>(hand);
     dynamic_cast<Base *>(this)->dispatcher.template add_handler<convert_handler_t<Event, Base>>(handWrapper);
 }
 
+// Process event
 template<typename Event>
 bool Widget::process_event(Event event, Window &root)
 {
@@ -200,11 +202,22 @@ bool Widget::process_event(Event event, Window &root)
     return cancelled;
 }
 
+// Propagate event
+template<>
+bool Widget::propagate_event(cen::mouse_button_event &event, const std::shared_ptr<Widget> &, cen::ipoint pos, cen::iarea alloc);
+
+template<>
+bool Widget::propagate_event(cen::mouse_motion_event &event, const std::shared_ptr<Widget> &, cen::ipoint pos, cen::iarea alloc);
+
 template<typename Event>
 bool Widget::propagate_event(Event &, const std::shared_ptr<Widget> &, cen::ipoint, cen::iarea)
 {
     return true;
 }
+
+// Process focus
+template<>
+void Widget::process_focus(cen::mouse_button_event &event, Window &root);
 
 template<typename Event>
 void Widget::process_focus(Event &, Window &)
