@@ -63,6 +63,10 @@ void Application::process_event(cen::event_handler &e)
         #endif // HOLOCRONUI_DEBUG_MESSAGES
     } else if (e.is(cen::event_type::mouse_motion)) {
         main_window.process_event(e.get<cen::mouse_motion_event>(), main_window);
+    } else if (e.is(cen::event_type::key_up)) {
+        main_window.process_focussed_event(e.get<cen::keyboard_event>());
+    } else if (e.is(cen::event_type::text_input)) {
+        main_window.process_focussed_event(e.get<cen::text_input_event>());
     }
 }
 

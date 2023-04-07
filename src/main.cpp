@@ -6,6 +6,7 @@
 #include "TextBox.h"
 #include "BoxContainer.h"
 #include "Button.h"
+#include "TextInput.h"
 #include <iostream>
 
 // test functions
@@ -226,6 +227,23 @@ void test_button()
     a->run();
 }
 
+void test_text_input()
+{
+    std::cout << "------- Test Text Input -------\n";
+    auto a = std::make_shared<Application>();
+    a->add_event_handler<app_startup_event>([] (const app_startup_event& event) {
+        Window& main_window = event.get_app()->get_window();
+        auto cont1 = std::make_shared<BoxContainer>(BoxDirection::VERTICAL);
+        auto ch1 = std::make_shared<Button>("Click me");
+        auto input = std::make_shared<TextInput>();
+        cont1->append_child(ch1);
+        cont1->append_child(input);
+        main_window.set_child(cont1);
+    });
+    std::cout << a << "\n";
+    a->run();
+}
+
 void tests(int test)
 {
     switch (test) {
@@ -253,6 +271,9 @@ void tests(int test)
         case 8:
             test_button();
             break;
+        case 9:
+            test_text_input();
+            break;
         default:
             std::cout << "Invalid test\n";
             break;
@@ -267,7 +288,7 @@ int main(int, char**)
     const cen::ttf ttf;
 
     // Tests
-    tests(8);
+    tests(9);
 
     // Launch application
 /*    std::cout << "------- Launch application -------\n";

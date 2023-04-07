@@ -157,7 +157,11 @@ protected:
     cen::iarea allocated_size;
     SizingPolicy sizing_policy;
     Widget *parent = nullptr;
-    WidgetEventDispatcher<cen::mouse_button_event, cen::mouse_motion_event> dispatcher;
+    WidgetEventDispatcher<
+        cen::mouse_button_event,
+        cen::mouse_motion_event,
+        cen::keyboard_event,
+        cen::text_input_event> dispatcher;
     bool hover = false;
     bool active = false;
     bool focused = false;
